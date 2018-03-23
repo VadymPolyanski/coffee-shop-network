@@ -46,7 +46,9 @@ lazy val persistence = project
     assemblySettings,
     libraryDependencies ++= Seq(
       //deps
-    )
+    ))
+  .dependsOn(
+    utils
   )
 
 lazy val utils = project
