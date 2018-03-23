@@ -1,11 +1,13 @@
 package com.polianskyi.csn
 
+import com.polianskyi.csn.domain.CoffeeHouse
+
 class WebController {
 
   def runM(): Unit = {
     println("into Web")
 
-    new Facade().doThings(Entity("the best", NestedEntity("It's WIN")))
+    new Facade().doThings(CoffeeHouse("Bratslavska 104A", 106.3, 5200, "0984233"))
 
   }
 
