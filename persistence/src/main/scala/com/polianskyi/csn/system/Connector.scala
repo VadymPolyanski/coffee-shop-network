@@ -1,4 +1,4 @@
-package com.polianskyi.csn
+package com.polianskyi.csn.system
 
 import java.sql.{Connection, DriverManager, SQLException, Statement}
 
