@@ -12,7 +12,7 @@ class PostgresConnector extends Connector {
 
   private val url: String = getProperty("jdbc.url") +
     "?user=" + getProperty("jdbc.user")
-  "&password=" + getProperty("jdbc.password") +
+    "&password=" + getProperty("jdbc.password") +
     "&ssl=" + getProperty("jdbc.ssl")
 
   override def useConnection[T](act: Statement => T): T = {
