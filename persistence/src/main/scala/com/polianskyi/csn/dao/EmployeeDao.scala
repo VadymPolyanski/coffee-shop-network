@@ -2,7 +2,7 @@ package com.polianskyi.csn.dao
 
 import com.polianskyi.csn.domain.Employee
 
-class EmployeeDao extends GenericDao[Employee, String]{
+object EmployeeDao extends GenericDao[Employee, String] {
   override def findById(id: String): Employee = ???
 
   override def findAll(): List[Employee] = ???
