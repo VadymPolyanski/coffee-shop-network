@@ -18,12 +18,13 @@ lazy val csn = project
   )
 
 lazy val web = project
-  .settings(name := "web",
-            settings,
-            libraryDependencies ++= Seq(
-              //deps
-            ))
-  .dependsOn(
+  .settings(
+    name := "web",
+    settings,
+    libraryDependencies ++= Seq(
+      //deps
+    ) ++ logDependencies
+  ).dependsOn(
     core
   )
 
@@ -31,7 +32,7 @@ lazy val core = project
   .settings(
     name := "core",
     settings,
-    libraryDependencies ++= coreDependencies
+    libraryDependencies ++= coreDependencies ++ logDependencies
   )
   .dependsOn(
     utils,
@@ -42,7 +43,7 @@ lazy val persistence = project
   .settings(
     name := "persistence",
     settings,
-    libraryDependencies ++= persistenceDependencies
+    libraryDependencies ++= persistenceDependencies ++ logDependencies
   )
   .dependsOn(
     utils
@@ -54,30 +55,39 @@ lazy val utils = project
     settings,
     libraryDependencies ++= Seq(
       //deps
-    )
+    ) ++ logDependencies
   )
 
 // DEPENDENCIES
 
 lazy val dependencies =
   new {
-    val slf4jV    = "1.7.25"
+    val slf4jV    = "1.7.5"
+    val logbackV  = "1.2.3"
     val flywayV   = "5.0.7"
     val postgresV = "42.2.2"
 
-    val slf4j = "org.slf4j" % "jcl-over-slf4j" % slf4jV
-    val flyway   = "org.flywaydb"   % "flyway-core"    % flywayV
-
-    val postgres = "org.postgresql" % "postgresql" % postgresV
+    val logback  = "ch.qos.logback" % "logback-classic" % logbackV
+    val slf4j    =   "org.slf4j"    % "slf4j-api"       % slf4jV
+    val flyway   = "org.flywaydb"   % "flyway-core"     % flywayV
+    val postgres = "org.postgresql" % "postgresql"      % postgresV
   }
 
+lazy val logDependencies = Seq(
+  dependencies.slf4j,
+  dependencies.logback
+)
+
 lazy val coreDependencies = Seq(
-  dependencies.slf4j
+
+
 )
 
 lazy val persistenceDependencies = Seq(
   dependencies.postgres,
-  dependencies.flyway
+  dependencies.flyway,
+    dependencies.slf4j
+
 )
 
 // SETTINGS
