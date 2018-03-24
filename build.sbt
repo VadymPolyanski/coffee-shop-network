@@ -66,11 +66,21 @@ lazy val dependencies =
     val logbackV  = "1.2.3"
     val flywayV   = "5.0.7"
     val postgresV = "42.2.2"
+    val akkaV       = "2.4.3"
+    val scalaTestV  = "2.2.6"
 
-    val logback  = "ch.qos.logback" % "logback-classic" % logbackV
-    val slf4j    =   "org.slf4j"    % "slf4j-api"       % slf4jV
-    val flyway   = "org.flywaydb"   % "flyway-core"     % flywayV
-    val postgres = "org.postgresql" % "postgresql"      % postgresV
+    val logback           = "ch.qos.logback"    % "logback-classic"                     % logbackV
+    val slf4j             = "org.slf4j"         % "slf4j-api"                           % slf4jV
+    val flyway            = "org.flywaydb"      % "flyway-core"                         % flywayV
+    val postgres          = "org.postgresql"    % "postgresql"                          % postgresV
+    val akkaActor         = "com.typesafe.akka" %% "akka-actor"                         % akkaV
+    val akkaStream        = "com.typesafe.akka" %% "akka-stream"                        % akkaV
+    val akkaHttp          = "com.typesafe.akka" %% "akka-http-experimental"             % akkaV
+    val akkaJson          = "com.typesafe.akka" %% "akka-http-spray-json-experimental"  % akkaV
+    val akkaHttpTest      = "com.typesafe.akka" %% "akka-http-testkit"                  % akkaV
+    val scalaTest         = "org.scalatest"     %% "scalatest"                          % scalaTestV % "test"
+    val scalaTestSupport  = "org.scalamock"     %% "scalamock-scalatest-support"        % "3.4.2"
+
   }
 
 lazy val logDependencies = Seq(
@@ -80,7 +90,16 @@ lazy val logDependencies = Seq(
 
 lazy val coreDependencies = Seq(
 
+)
 
+lazy val webDependencies = Seq(
+    dependencies.akkaActor,
+    dependencies.akkaStream,
+    dependencies.akkaHttp,
+    dependencies.akkaJson,
+    dependencies.akkaHttpTest,
+    dependencies.scalaTest,
+    dependencies.scalaTestSupport
 )
 
 lazy val persistenceDependencies = Seq(
