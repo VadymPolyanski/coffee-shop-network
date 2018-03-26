@@ -3,7 +3,7 @@ name := "coffee-shop-network"
 version := "0.1"
 
 organization in ThisBuild := "com.polianskyi.csn"
-scalaVersion in ThisBuild := "2.12.3"
+scalaVersion in ThisBuild := "2.11.8"
 
 // PROJECTS
 
@@ -21,9 +21,7 @@ lazy val web = project
   .settings(
     name := "web",
     settings,
-    libraryDependencies ++= Seq(
-      //deps
-    ) ++ logDependencies
+    libraryDependencies ++= webDependencies ++ logDependencies
   ).dependsOn(
     core
   )
@@ -32,7 +30,7 @@ lazy val core = project
   .settings(
     name := "core",
     settings,
-    libraryDependencies ++= coreDependencies ++ logDependencies
+    libraryDependencies ++= coreDependencies ++ logDependencies ++ webDependencies
   )
   .dependsOn(
     utils,
@@ -73,13 +71,13 @@ lazy val dependencies =
     val slf4j             = "org.slf4j"         % "slf4j-api"                           % slf4jV
     val flyway            = "org.flywaydb"      % "flyway-core"                         % flywayV
     val postgres          = "org.postgresql"    % "postgresql"                          % postgresV
-    val akkaActor         = "com.typesafe.akka" %% "akka-actor"                         % akkaV
-    val akkaStream        = "com.typesafe.akka" %% "akka-stream"                        % akkaV
-    val akkaHttp          = "com.typesafe.akka" %% "akka-http-experimental"             % akkaV
-    val akkaJson          = "com.typesafe.akka" %% "akka-http-spray-json-experimental"  % akkaV
-    val akkaHttpTest      = "com.typesafe.akka" %% "akka-http-testkit"                  % akkaV
-    val scalaTest         = "org.scalatest"     %% "scalatest"                          % scalaTestV % "test"
-    val scalaTestSupport  = "org.scalamock"     %% "scalamock-scalatest-support"        % "3.4.2"
+    val akkaActor         = "com.typesafe.akka" %% "akka-actor"                          % akkaV
+    val akkaStream        = "com.typesafe.akka" %% "akka-stream"                         % akkaV
+    val akkaHttp          = "com.typesafe.akka" %% "akka-http-experimental"              % akkaV
+    val akkaJson          = "com.typesafe.akka" %% "akka-http-spray-json-experimental"   % akkaV
+    val akkaHttpTest      = "com.typesafe.akka" %% "akka-http-testkit"                   % akkaV
+    val scalaTest         = "org.scalatest"     %% "scalatest"                           % scalaTestV % "test"
+    val scalaTestSupport  = "org.scalamock"     %% "scalamock-scalatest-support"         % "3.4.2"
 
   }
 
@@ -124,10 +122,11 @@ lazy val compilerOptions = Seq(
 )
 
 lazy val settings = Seq(
-  scalacOptions ++= compilerOptions,
-  resolvers ++= Seq(
+  scalacOptions := compilerOptions,
+  resolvers := Seq(
     "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository",
-    Resolver.sonatypeRepo("releases"),
+    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+      Resolver.sonatypeRepo("releases"),
     Resolver.sonatypeRepo("snapshots")
   )
 )
