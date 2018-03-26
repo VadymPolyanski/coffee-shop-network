@@ -3,7 +3,7 @@ name := "coffee-shop-network"
 version := "0.1"
 
 organization in ThisBuild := "com.polianskyi.csn"
-scalaVersion in ThisBuild := "2.11.8"
+scalaVersion in ThisBuild := "2.12.3"
 
 // PROJECTS
 
@@ -21,7 +21,9 @@ lazy val web = project
   .settings(
     name := "web",
     settings,
-    libraryDependencies ++= webDependencies ++ logDependencies
+    libraryDependencies ++= Seq(
+
+    ) ++ logDependencies
   ).dependsOn(
     core
   )
@@ -30,7 +32,7 @@ lazy val core = project
   .settings(
     name := "core",
     settings,
-    libraryDependencies ++= coreDependencies ++ logDependencies ++ webDependencies
+    libraryDependencies ++= webDependencies ++ coreDependencies ++ logDependencies
   )
   .dependsOn(
     utils,
@@ -60,24 +62,23 @@ lazy val utils = project
 
 lazy val dependencies =
   new {
-    val slf4jV    = "1.7.5"
-    val logbackV  = "1.2.3"
-    val flywayV   = "5.0.7"
-    val postgresV = "42.2.2"
-    val akkaV       = "2.4.3"
+    val slf4jV      = "1.7.5"
+    val logbackV    = "1.2.3"
+    val flywayV     = "5.0.7"
+    val postgresV   = "42.2.2"
+    val akkaV       = "10.1.0"
+    val akkaStreamV = "2.5.11"
     val scalaTestV  = "2.2.6"
 
     val logback           = "ch.qos.logback"    % "logback-classic"                     % logbackV
     val slf4j             = "org.slf4j"         % "slf4j-api"                           % slf4jV
     val flyway            = "org.flywaydb"      % "flyway-core"                         % flywayV
     val postgres          = "org.postgresql"    % "postgresql"                          % postgresV
-    val akkaActor         = "com.typesafe.akka" %% "akka-actor"                          % akkaV
-    val akkaStream        = "com.typesafe.akka" %% "akka-stream"                         % akkaV
-    val akkaHttp          = "com.typesafe.akka" %% "akka-http-experimental"              % akkaV
-    val akkaJson          = "com.typesafe.akka" %% "akka-http-spray-json-experimental"   % akkaV
-    val akkaHttpTest      = "com.typesafe.akka" %% "akka-http-testkit"                   % akkaV
-    val scalaTest         = "org.scalatest"     %% "scalatest"                           % scalaTestV % "test"
-    val scalaTestSupport  = "org.scalamock"     %% "scalamock-scalatest-support"         % "3.4.2"
+    val akkaStream        = "com.typesafe.akka" %% "akka-stream"                        % akkaStreamV
+    val akkaHttp          = "com.typesafe.akka" %% "akka-http"                          % akkaV
+    val akkaJson          = "com.typesafe.akka" %% "akka-http-spray-json"               % akkaV
+    val scalaTest         = "org.scalatest"     %% "scalatest"                          % scalaTestV % "test"
+    val scalaTestSupport  = "org.scalamock"     %% "scalamock-scalatest-support"        % "3.4.2"
 
   }
 
@@ -91,13 +92,10 @@ lazy val coreDependencies = Seq(
 )
 
 lazy val webDependencies = Seq(
-    dependencies.akkaActor,
-    dependencies.akkaStream,
-    dependencies.akkaHttp,
-    dependencies.akkaJson,
-    dependencies.akkaHttpTest,
-    dependencies.scalaTest,
-    dependencies.scalaTestSupport
+  dependencies.akkaStream,
+  dependencies.akkaHttp,
+  dependencies.akkaJson
+
 )
 
 lazy val persistenceDependencies = Seq(
