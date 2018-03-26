@@ -10,7 +10,10 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
   private val insert: String = "INSERT INTO coffee_houses (address, space, rental_price, mobile_number)" +
     "\nVALUES (?, ?, ?, ?);"
 
-  override def findByPk(address: String): Future[Option[CoffeeHouse]] = ???
+  override def findByPk(address: String): Future[Option[CoffeeHouse]] = {
+    println("DONE GO HOME")
+    Future.successful(None)
+  }
 
   override def findAll(): Future[List[CoffeeHouse]] = ???
 
@@ -24,7 +27,7 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
       stmt.setString(4, entity.mobileNumber)
       stmt.execute()
 
-      entity
+      Future.successful(Option(entity))
     })
 
   override def update(entity: CoffeeHouse): Future[Option[CoffeeHouse]] = ???
