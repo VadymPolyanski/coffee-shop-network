@@ -21,9 +21,7 @@ lazy val web = project
   .settings(
     name := "web",
     settings,
-    libraryDependencies ++= Seq(
-
-    ) ++ logDependencies
+    libraryDependencies ++= webDependencies ++ logDependencies
   ).dependsOn(
     core
   )
