@@ -13,19 +13,32 @@ object CoffeeHouseHandler {
   case class Create(address: String, space: Double, rentalPrice: Double, mobileNumber: String)
   case class Update(address: String, space: Double, rentalPrice: Double, mobileNumber: String)
   case class GetCoffeeHouse(address: String)
+  case class GetAllCoffeeHouses()
   case class DeleteCoffeeHouse(address: String)
   case class CoffeeHouseNotFound(address: String)
   case class CoffeeHouseDeleted(address: String)
+  case class CoffeeHouseCreatingError(address: String, message: String)
 }
 
 class CoffeeHouseHandler extends Actor {
   import CoffeeHouseHandler._
   implicit val ec: ExecutionContextExecutor = context.dispatcher
   override def receive: Receive = {
-    case Create(address, space, rentalPrice, mobileNumber) => create(CoffeeHouse(address, space, rentalPrice, mobileNumber)) pipeTo sender()
+    case Create(address, space, rentalPrice, mobileNumber) =>
+      val _sender = sender()
+      create(CoffeeHouse(address, space, rentalPrice, mobileNumber)).foreach {
+        case Some(i) => _sender ! CoffeeHouse(i.address, i.space, i.rentalPrice, i.mobileNumber)
+        case None => _sender ! CoffeeHouseCreatingError(address, "Can't create coffee house")
+      }
 
     case Update(address, space, rentalPrice, mobileNumber) => update(CoffeeHouse(address, space, rentalPrice, mobileNumber)) pipeTo sender()
 
+    case GetAllCoffeeHouses() =>
+      val _sender = sender()
+      findAll().foreach {
+        case Some(i) => _sender ! i
+        case Some(Nil) => Nil
+      }
 
     case GetCoffeeHouse(address) =>
       val _sender = sender()

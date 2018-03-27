@@ -30,7 +30,7 @@ trait CoffeeHouseHttpService extends Protocols {
   import scala.concurrent.duration._
 
   implicit def executor: ExecutionContextExecutor
-  implicit def requestTimeout: Timeout = Timeout(5 seconds)
+  implicit def requestTimeout: Timeout = Timeout(50 seconds)
 
   implicit val system: ActorSystem
   implicit val materializer: Materializer
@@ -48,6 +48,15 @@ trait CoffeeHouseHttpService extends Protocols {
             entity(as[CoffeeHouse]) { ch =>
               complete {
                 (coffeeHouseHandler ? Create(ch.address, ch.space, ch.rentalPrice, ch.mobileNumber)).mapTo[CoffeeHouse]
+              }
+            }
+          }
+        } ~ path("all") {
+          get {
+            complete {
+              (coffeeHouseHandler ? GetAllCoffeeHouses()).map {
+                case list: List[CoffeeHouse] =>  Some(list)
+                case Nil => Some(Nil)
               }
             }
           }
