@@ -7,9 +7,9 @@ import scala.concurrent.Future
 object EmployeeDao extends GenericDao[Employee, String] {
   override def findByPk(id: String): Future[Option[Employee]] = ???
 
-  override def findAll(): Future[List[Employee]] = ???
+  override def findAll(): Future[Option[List[Employee]]] = ???
 
-  override def delete(id: String): Future[Option[Employee]] = ???
+  override def delete(id: String): Future[Option[String]] = ???
 
   override def create(entity: Employee): Future[Option[Employee]] = ???
 
