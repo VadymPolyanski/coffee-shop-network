@@ -69,7 +69,7 @@ object PostgresConnector extends Connector {
     val localUrl = dburl + "postgres"
 
 
-    if (!getConnectionWithAction(localUrl, conn => conn.createStatement().executeQuery(sqlCheck)next())) {
+    if (!getConnectionWithAction(localUrl, conn => conn.createStatement().executeQuery(sqlCheck).next())) {
       log.info("DB csn doesn't exist. Creating new from user csn.")
       getConnectionWithAction(localUrl, conn => conn.createStatement().execute(sql))
     }

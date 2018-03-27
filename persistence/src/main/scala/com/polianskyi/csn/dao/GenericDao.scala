@@ -1,9 +1,12 @@
 package com.polianskyi.csn.dao
 
+import scala.concurrent.Future
+
+
 trait GenericDao[E, PK] {
-  def findById(id: PK): E
-  def findAll(): List[E]
-  def delete(id: PK): E
-  def create(entity: E): E
-  def update(entity: E): E
+  def findByPk(id: PK): Future[Option[E]]
+  def findAll(): Future[Option[List[E]]]
+  def delete(id: PK): Future[Option[PK]]
+  def create(entity: E): Future[Option[E]]
+  def update(entity: E): Future[Option[E]]
 }
