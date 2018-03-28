@@ -1,9 +1,12 @@
+import org.scalajs.sbtplugin.ScalaJSPlugin.AutoImport.scalaJSUseMainModuleInitializer
+
 name := "coffee-shop-network"
 
 version := "0.1"
 
 organization in ThisBuild := "com.polianskyi.csn"
 scalaVersion in ThisBuild := "2.12.3"
+
 
 // PROJECTS
 
@@ -14,6 +17,7 @@ lazy val csn = project
     web,
     core,
     persistence,
+    `front-end`,
     utils
   )
 
@@ -23,6 +27,7 @@ lazy val web = project
     settings,
     libraryDependencies ++= webDependencies ++ logDependencies
   ).dependsOn(
+  `front-end`,
     core
   )
 
@@ -45,6 +50,21 @@ lazy val persistence = project
   )
   .dependsOn(
     utils
+  )
+
+
+lazy val `front-end` = project
+  .settings(
+    name := "front-end",
+    scalaJSUseMainModuleInitializer := true,
+    settings,
+    libraryDependencies ++= logDependencies ++ Seq(
+//      "org.scala-js" %% "scalajs-dom" % "0.8.1",
+//      "com.lihaoyi" %% "scalatags" % "0.4.6"
+    )
+  )
+  .enablePlugins(ScalaJSPlugin)
+  .dependsOn(
   )
 
 lazy val utils = project
@@ -123,6 +143,6 @@ lazy val settings = Seq(
     "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository",
     "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
       Resolver.sonatypeRepo("releases"),
-    Resolver.sonatypeRepo("snapshots")
+    Resolver.sonatypeRepo("snapshots"),
   )
 )
