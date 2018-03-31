@@ -13,6 +13,8 @@ import com.polianskyi.csn.CoffeeHouseHandler._
 import com.polianskyi.csn.domain.CoffeeHouse
 import com.typesafe.config.Config
 import spray.json.{DefaultJsonProtocol, RootJsonFormat}
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
+import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -38,61 +40,72 @@ trait CoffeeHouseHttpService extends Protocols {
   def config: Config
   def coffeeHouseHandler: ActorRef
   val logger: LoggingAdapter
-
+  val settings: CorsSettings = CorsSettings.defaultSettings.withAllowGenericHttpRequests(true)
 
   val routes: Route =
-    logRequestResult("coffee-shop-network") {
-      pathPrefix("coffe-houses") {
-        path("create") {
-          post {
-            entity(as[CoffeeHouse]) { ch =>
-              complete {
-                (coffeeHouseHandler ? Create(ch.address, ch.space, ch.rentalPrice, ch.mobileNumber)).mapTo[CoffeeHouse]
+    cors(settings) {
+      logRequestResult("coffee-shop-network") {
+        pathPrefix("coffe-houses") {
+          path("create") {
+            post {
+              entity(as[CoffeeHouse]) { ch =>
+                complete {
+                  (coffeeHouseHandler ? Create(ch.address, ch.space, ch.rentalPrice, ch.mobileNumber)).mapTo[CoffeeHouse]
+                }
               }
             }
-          }
-        } ~ path("all") {
-          get {
-            complete {
-              (coffeeHouseHandler ? GetAllCoffeeHouses()).map {
-                case list: List[CoffeeHouse] =>  Some(list)
-                case Nil => Some(Nil)
-              }
-            }
-          }
-        } ~
-          path(Segment) { address =>
+          } ~ path("all") {
             get {
               complete {
-                (coffeeHouseHandler ? GetCoffeeHouse(address)).map {
-                  case CoffeeHouse(a, s, p, m) => Some(CoffeeHouse(a, s, p, m))
-                  case _ => None
+                (coffeeHouseHandler ? GetAllCoffeeHouses()).map {
+                  case list: List[CoffeeHouse] => Some(list)
+                  case Nil => Some(Nil)
                 }
               }
             }
           } ~
-          path(Segment) { address =>
-            put {
-              entity(as[CoffeeHouse]) { ch =>
+            path(Segment) { address =>
+              get {
                 complete {
-                  (coffeeHouseHandler ? Update(ch.address, ch.space, ch.rentalPrice, ch.mobileNumber)).map {
-                    case false => InternalServerError -> s"Could not update coffee house with address $address"
-                    case _ => NoContent -> ""
+                  (coffeeHouseHandler ? GetCoffeeHouse(address)).map {
+                    case CoffeeHouse(a, s, p, m) => Some(CoffeeHouse(a, s, p, m))
+                    case _ => None
                   }
                 }
               }
-            }
-          } ~
-          path(Segment) { address =>
-            delete {
+            } ~
+            path(Segment) { address =>
+              put {
+                entity(as[CoffeeHouse]) { ch =>
+                  complete {
+                    (coffeeHouseHandler ? Update(ch.address, ch.space, ch.rentalPrice, ch.mobileNumber)).map {
+                      case false => InternalServerError -> s"Could not update coffee house with address $address"
+                      case _ => NoContent -> ""
+                    }
+                  }
+                }
+              }
+            } ~
+            path(Segment) { address =>
+              delete {
+                complete {
+                  (coffeeHouseHandler ? DeleteCoffeeHouse(address)).map {
+                    case CoffeeHouseNotFound(`address`) => InternalServerError -> s"Could not delete coffee house with address $address"
+                    case _: CoffeeHouseDeleted => NoContent -> ""
+                  }
+                }
+              }
+            } ~ path("names") {
+            get {
               complete {
-                (coffeeHouseHandler ? DeleteCoffeeHouse(address)).map {
-                  case CoffeeHouseNotFound(`address`) => InternalServerError -> s"Could not delete coffee house with address $address"
-                  case _: CoffeeHouseDeleted => NoContent -> ""
+                (coffeeHouseHandler ? GetAllCoffeeHouses()).map {
+                  case list: List[String] => Some(list)
+                  case Nil => Some(Nil)
                 }
               }
             }
           }
+        }
       }
     }
 }

@@ -21,7 +21,9 @@ lazy val web = project
   .settings(
     name := "web",
     settings,
-    libraryDependencies ++= webDependencies ++ logDependencies
+    libraryDependencies ++= Seq(
+      "ch.megard" %% "akka-http-cors" % "0.3.0"
+    ) ++ webDependencies ++ logDependencies
   ).dependsOn(
     core
   )
