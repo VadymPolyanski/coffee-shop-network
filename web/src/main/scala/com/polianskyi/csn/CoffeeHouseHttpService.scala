@@ -3,6 +3,8 @@ package com.polianskyi.csn
 import akka.actor.{ActorRef, ActorSystem}
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import akka.http.scaladsl.model.HttpMethod
+import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.StatusCodes.{InternalServerError, NoContent}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
@@ -40,7 +42,8 @@ trait CoffeeHouseHttpService extends Protocols {
   def config: Config
   def coffeeHouseHandler: ActorRef
   val logger: LoggingAdapter
-  val settings: CorsSettings = CorsSettings.defaultSettings.withAllowGenericHttpRequests(true)
+  val settings: CorsSettings = CorsSettings.defaultSettings.withAllowGenericHttpRequests(true).withAllowCredentials(true)
+    .withAllowedMethods(List(GET, PUT, POST, DELETE))
 
   val routes: Route =
     cors(settings) {
@@ -51,6 +54,15 @@ trait CoffeeHouseHttpService extends Protocols {
               entity(as[CoffeeHouse]) { ch =>
                 complete {
                   (coffeeHouseHandler ? Create(ch.address, ch.space, ch.rentalPrice, ch.mobileNumber)).mapTo[CoffeeHouse]
+                }
+              }
+            }
+          } ~ path("addresses") {
+            get {
+              complete {
+                (coffeeHouseHandler ? GetAllCoffeeHouseAddresses()).map {
+                  case list: List[String] => Some(list)
+                  case Nil => Some(Nil)
                 }
               }
             }
@@ -74,18 +86,20 @@ trait CoffeeHouseHttpService extends Protocols {
                 }
               }
             } ~
-            path(Segment) { address =>
-              put {
-                entity(as[CoffeeHouse]) { ch =>
-                  complete {
-                    (coffeeHouseHandler ? Update(ch.address, ch.space, ch.rentalPrice, ch.mobileNumber)).map {
-                      case false => InternalServerError -> s"Could not update coffee house with address $address"
-                      case _ => NoContent -> ""
+            cors(settings) {
+              path(Segment) { address =>
+                put {
+                  entity(as[CoffeeHouse]) { ch =>
+                    complete {
+                      (coffeeHouseHandler ? Update(ch.address, ch.space, ch.rentalPrice, ch.mobileNumber)).map {
+                        case false => InternalServerError -> s"Could not update coffee house with address $address"
+                        case _ => NoContent -> ""
+                      }
                     }
                   }
                 }
               }
-            } ~
+            }~
             path(Segment) { address =>
               delete {
                 complete {
@@ -95,16 +109,7 @@ trait CoffeeHouseHttpService extends Protocols {
                   }
                 }
               }
-            } ~ path("names") {
-            get {
-              complete {
-                (coffeeHouseHandler ? GetAllCoffeeHouses()).map {
-                  case list: List[String] => Some(list)
-                  case Nil => Some(Nil)
-                }
-              }
             }
-          }
         }
       }
     }

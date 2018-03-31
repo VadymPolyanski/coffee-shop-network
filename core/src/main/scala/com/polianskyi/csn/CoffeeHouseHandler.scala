@@ -14,6 +14,7 @@ object CoffeeHouseHandler {
   case class Update(address: String, space: Double, rentalPrice: Double, mobileNumber: String)
   case class GetCoffeeHouse(address: String)
   case class GetAllCoffeeHouses()
+  case class GetAllCoffeeHouseAddresses()
   case class DeleteCoffeeHouse(address: String)
   case class CoffeeHouseNotFound(address: String)
   case class CoffeeHouseDeleted(address: String)
@@ -36,6 +37,13 @@ class CoffeeHouseHandler extends Actor {
     case GetAllCoffeeHouses() =>
       val _sender = sender()
       findAll().foreach {
+        case Some(i) => _sender ! i
+        case Some(Nil) => Nil
+      }
+
+    case GetAllCoffeeHouseAddresses() =>
+      val _sender = sender()
+      findAllAddresses().foreach {
         case Some(i) => _sender ! i
         case Some(Nil) => Nil
       }
