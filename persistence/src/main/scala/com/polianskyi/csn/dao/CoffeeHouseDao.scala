@@ -1,5 +1,7 @@
 package com.polianskyi.csn.dao
 
+import java.sql.ResultSet
+
 import com.polianskyi.csn.domain.CoffeeHouse
 import com.polianskyi.csn.system.PostgresConnector
 
@@ -22,6 +24,9 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
   private val selectAll: String = "SELECT * " +
     "FROM coffee_houses;"
 
+  private val selectAllAddresses: String = "SELECT address " +
+    "FROM coffee_houses;"
+
 
   override def findByPk(address: String): Future[Option[CoffeeHouse]] = {
     PostgresConnector.withPreparedStatement(selectByAddress, pstmt => {
@@ -40,18 +45,15 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
   override def findAll(): Future[Option[List[CoffeeHouse]]] = {
     PostgresConnector.withStatement(stmt => {
       val rs = stmt.executeQuery(selectAll)
+      convertResultToList(rs,
+        result => CoffeeHouse(rs.getString(1), rs.getDouble(2), rs.getDouble(3), rs.getString(4)))
+    })
+  }
 
-      val coffeeHouses = ListBuffer.empty[CoffeeHouse]
-      if (rs.next()) {
-        while ( {rs.next}) {
-
-          coffeeHouses += CoffeeHouse(rs.getString(1), rs.getDouble(2), rs.getDouble(3), rs.getString(4))
-        }
-
-        Future.successful(Option(coffeeHouses.toList))
-      } else
-        Future.successful(Option(Nil))
-
+  def findAllAddresses(): Future[Option[List[String]]] = {
+    PostgresConnector.withStatement(stmt => {
+      val rs = stmt.executeQuery(selectAllAddresses)
+      convertResultToList(rs, result => result.getString(1))
     })
   }
 
@@ -87,5 +89,16 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
 
       Future.successful(Option(entity))
     })
+  }
+
+  private def convertResultToList[T](rs: ResultSet, act: ResultSet => T): Future[Option[List[T]]] = {
+    val temporaryBuffer = ListBuffer.empty[T]
+    if (rs.next()) {
+      while ( {rs.next}) {
+        temporaryBuffer += act(rs)
+      }
+      Future.successful(Option(temporaryBuffer.toList))
+    } else
+      Future.successful(Option(Nil))
   }
 }
