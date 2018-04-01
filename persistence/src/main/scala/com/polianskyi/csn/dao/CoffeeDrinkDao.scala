@@ -14,6 +14,9 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
   private val insertWithProducts: String = "INSERT INTO coffee_drinks_products (coffee_drink_name, product_name)" +
     "\nVALUES (?, ?);"
 
+  private val deleteProducts: String = "DELETE FROM coffee_drinks_products" +
+    "\nWHERE coffee_drink_name="
+
   private val update: String = "UPDATE coffee_drinks SET name=?, price=?, native_price=?, description=?" +
     "\nWHERE name=?;"
 
@@ -59,9 +62,10 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
   override def delete(name: String): Future[Option[String]] = {
     PostgresConnector.withPreparedStatement(delete, pstmt => {
       pstmt.setString(1, name)
-      if (pstmt.execute())
+      if (pstmt.execute()){
+        pstmt.getConnection.createStatement().execute(deleteProducts + s"'$name';")
         Future.successful(Option(name))
-      else
+      } else
         Future.successful(Option.empty)
     })
   }
@@ -74,7 +78,14 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
       pstmt.setString(4, entity.description)
       pstmt.execute()
 
-      //todo: creating with adding products
+      val productPstmt = pstmt.getConnection.prepareStatement(insertWithProducts)
+
+      entity.products.foreach(product => {
+        productPstmt.setString(1, entity.name)
+        productPstmt.setString(2, product.name)
+        productPstmt.execute()
+        productPstmt.clearParameters()
+      })
 
       Future.successful(Option(entity))
     })
@@ -87,6 +98,17 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
       pstmt.setString(4, entity.description)
       pstmt.setString(5, entity.name)
       pstmt.execute()
+
+      pstmt.getConnection.createStatement().execute(deleteProducts + s"'${entity.name}';")
+
+      val productPstmt = pstmt.getConnection.prepareStatement(insertWithProducts)
+
+      entity.products.foreach(product => {
+        productPstmt.setString(1, entity.name)
+        productPstmt.setString(2, product.name)
+        productPstmt.execute()
+        productPstmt.clearParameters()
+      })
 
       Future.successful(Option(entity))
     })
