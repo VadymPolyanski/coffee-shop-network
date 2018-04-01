@@ -29,7 +29,7 @@ class CoffeeDrinkHandler extends Actor {
       val _sender = sender()
       create(CoffeeDrink(name, price, nativePrice, products, description)).foreach {
         case Some(i) => _sender ! CoffeeDrink(i.name, i.price, i.nativePrice, i.products, i.description)
-        case None => _sender ! CoffeeDrinkCreatingError(name, "Can't create coffee house")
+        case None => _sender ! CoffeeDrinkCreatingError(name, "Can't create coffee drink")
       }
 
     case Update(name, price, nativePrice, products, description) => update(CoffeeDrink(name, price, nativePrice, products, description)) pipeTo sender()

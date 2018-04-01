@@ -9,15 +9,10 @@ import akka.pattern.ask
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import com.polianskyi.csn.CoffeeHouseHandler._
 import com.polianskyi.csn.domain.CoffeeHouse
+import com.polianskyi.csn.service.Protocols
 import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
-trait CoffeeHouseProtocols extends DefaultJsonProtocol {
-  implicit val deleteChFormat: RootJsonFormat[CoffeeHouseDeleted] = jsonFormat1(CoffeeHouseDeleted.apply)
-  implicit val chNotFoundFormat: RootJsonFormat[CoffeeHouseNotFound] = jsonFormat1(CoffeeHouseNotFound.apply)
-  implicit val coffeeHouseFormat: RootJsonFormat[CoffeeHouse] = jsonFormat4(CoffeeHouse.apply)
-}
-
-trait CoffeeHouseHttpService extends CoffeeHouseProtocols with GenericHttpService {
+trait CoffeeHouseHttpService extends Protocols with GenericHttpService {
   def coffeeHouseHandler: ActorRef
 
   val coffeeHouseRoutes: Route =

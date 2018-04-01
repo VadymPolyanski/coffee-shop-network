@@ -7,30 +7,31 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
-import com.polianskyi.csn.CoffeeDrinkHandler._
-import com.polianskyi.csn.domain.CoffeeDrink
+import com.polianskyi.csn.ProductHandler._
+import com.polianskyi.csn.domain.Product
 import com.polianskyi.csn.service.Protocols
 
-trait CoffeeDrinkHttpService extends Protocols with GenericHttpService{
-  def coffeeDrinkHandler: ActorRef
 
-  val coffeeDrinkRoutes: Route =
+trait ProductHttpService extends Protocols with GenericHttpService{
+  def productHandler: ActorRef
+
+  val productRoutes: Route =
     cors(corsSettings) {
       logRequestResult("coffee-shop-network") {
-        pathPrefix("coffee-drinks") {
+        pathPrefix("products") {
           path("create") {
             post {
-              entity(as[CoffeeDrink]) { ch =>
+              entity(as[Product]) { ch =>
                 complete {
-                  (coffeeDrinkHandler ? Create(ch.name, ch.price, ch.nativePrice, ch.products, ch.description)).mapTo[CoffeeDrink]
+                  (productHandler ? Create(ch.name, ch.price, ch.unitOfMeasurement, ch.description)).mapTo[Product]
                 }
               }
             }
           } ~ path("all") {
             get {
               complete {
-                (coffeeDrinkHandler ? GetAllCoffeeDrinks()).map {
-                  case list: List[CoffeeDrink] => Some(list)
+                (productHandler ? GetAllProducts()).map {
+                  case list: List[Product] => Some(list)
                   case Nil => Some(Nil)
                 }
               }
@@ -39,8 +40,8 @@ trait CoffeeDrinkHttpService extends Protocols with GenericHttpService{
             path(Segment) { name =>
               get {
                 complete {
-                  (coffeeDrinkHandler ? GetCoffeeDrink(name)).map {
-                    case CoffeeDrink(n, p, np, pr, d) => Some(CoffeeDrink(n, p, np, pr, d))
+                  (productHandler ? GetProduct(name)).map {
+                    case Product(n, p, u, d) => Some(Product(n, p, u, d))
                     case _ => None
                   }
                 }
@@ -48,10 +49,10 @@ trait CoffeeDrinkHttpService extends Protocols with GenericHttpService{
             } ~
             path(Segment) { name =>
               put {
-                entity(as[CoffeeDrink]) { ch =>
+                entity(as[Product]) { ch =>
                   complete {
-                    (coffeeDrinkHandler ? Update(ch.name, ch.price, ch.nativePrice, ch.products, ch.description)).map {
-                      case false => InternalServerError -> s"Could not update coffee drink with name $name"
+                    (productHandler ? Update(ch.name, ch.price, ch.unitOfMeasurement, ch.description)).map {
+                      case false => InternalServerError -> s"Could not update product with name $name"
                       case _ => NoContent -> ""
                     }
                   }
@@ -61,9 +62,9 @@ trait CoffeeDrinkHttpService extends Protocols with GenericHttpService{
             path(Segment) { name =>
               delete {
                 complete {
-                  (coffeeDrinkHandler ? DeleteCoffeeDrink(name)).map {
-                    case CoffeeDrinkNotFound(`name`) => InternalServerError -> s"Could not delete coffee drink with name $name"
-                    case _: CoffeeDrinkDeleted => NoContent -> ""
+                  (productHandler ? DeleteProduct(name)).map {
+                    case ProductNotFound(`name`) => InternalServerError -> s"Could not delete product with name $name"
+                    case _: ProductDeleted => NoContent -> ""
                   }
                 }
               }

@@ -6,12 +6,12 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import com.polianskyi.csn.http.{CoffeeDrinkHttpService, CoffeeHouseHttpService}
+import com.polianskyi.csn.http.{CoffeeDrinkHttpService, CoffeeHouseHttpService, ProductHttpService}
 import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.ExecutionContextExecutor
 
-object CsnHttpService extends App with CoffeeHouseHttpService with CoffeeDrinkHttpService{
+object CsnHttpService extends App with CoffeeHouseHttpService with CoffeeDrinkHttpService with ProductHttpService{
   import scala.concurrent.duration._
 
   override implicit def requestTimeout: Timeout = Timeout(50 seconds)
@@ -25,7 +25,8 @@ object CsnHttpService extends App with CoffeeHouseHttpService with CoffeeDrinkHt
   override val logger = Logging(system, getClass)
   override def coffeeHouseHandler = system.actorOf(CoffeeHouseHandler.props())
   override def coffeeDrinkHandler = system.actorOf(CoffeeDrinkHandler.props())
+  override def productHandler = system.actorOf(ProductHandler.props())
 
 
-  Http().bindAndHandle(coffeeHouseRoutes ~ coffeeDrinkRoutes, config.getString("http.interface"), config.getInt("http.port"))
+  Http().bindAndHandle(coffeeHouseRoutes ~ coffeeDrinkRoutes ~ productRoutes, config.getString("http.interface"), config.getInt("http.port"))
 }

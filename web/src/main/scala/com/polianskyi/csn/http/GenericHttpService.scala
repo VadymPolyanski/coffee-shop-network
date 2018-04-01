@@ -1,6 +1,6 @@
 package com.polianskyi.csn.http
 
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.model.HttpMethods.{DELETE, GET, POST, PUT}
 import akka.stream.Materializer
