@@ -56,7 +56,7 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
           var products: List[Product] = Nil
           ProductDao.findAllByCoffeeDrink(result.getString(1)).onComplete(prod => products = prod.get.get)
 
-          CoffeeDrink(rs.getString(1), rs.getDouble(2), rs.getDouble(3), products, rs.getString(4))
+          CoffeeDrink(result.getString(1), result.getDouble(2), result.getDouble(3), products, result.getString(4))
         })
     })
   }

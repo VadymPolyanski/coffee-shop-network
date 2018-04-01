@@ -44,7 +44,7 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
     PostgresConnector.withStatement(stmt => {
       val rs = stmt.executeQuery(selectAll)
       convertResultToList(rs,
-        result => CoffeeHouse(rs.getString(1), rs.getDouble(2), rs.getDouble(3), rs.getString(4)))
+        result => CoffeeHouse(result.getString(1), result.getDouble(2), result.getDouble(3), result.getString(4)))
     })
   }
 

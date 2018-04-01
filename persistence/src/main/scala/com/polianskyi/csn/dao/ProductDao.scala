@@ -11,19 +11,28 @@ object ProductDao extends GenericDao[Product, String] {
     "FROM products as p INNER JOIN coffee_drinks_products ON p.name = coffee_drinks_products.coffee_drink_name" +
   "\n WHERE coffee_drinks_products.coffee_drink_name="
 
+  private val selectAll: String = "SELECT * " +
+    "FROM products;"
+
 
   def findAllByCoffeeDrink(coffeeDrinkName: String): Future[Option[List[Product]]] = {
     PostgresConnector.withStatement(stmt => {
       val rs = stmt.executeQuery(allProductsForCD  + s"'$coffeeDrinkName';")
 
       convertResultToList(rs,
-        result => Product(rs.getString(1), rs.getDouble(2), rs.getString(3), rs.getString(4)))
+        result => Product(result.getString(1), result.getDouble(2), result.getString(3), result.getString(4)))
     })
   }
 
   override def findByPk(id: String): Future[Option[Product]] = ???
 
-  override def findAll(): Future[Option[List[Product]]] = ???
+  override def findAll(): Future[Option[List[Product]]] = {
+    PostgresConnector.withStatement(stmt => {
+      val rs = stmt.executeQuery(selectAll)
+      convertResultToList(rs,
+        result => Product(result.getString(1), result.getDouble(2), result.getString(3), result.getString(4)))
+    })
+  }
 
   override def delete(id: String): Future[Option[String]] = ???
 
