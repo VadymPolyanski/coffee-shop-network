@@ -4,8 +4,10 @@ import com.polianskyi.csn.domain.CoffeeDrink
 import com.polianskyi.csn.domain.Product
 import com.polianskyi.csn.system.PostgresConnector
 import com.polianskyi.csn.ConverterUtil._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
+import scala.util.Try
 
 object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
   private val insert: String = "INSERT INTO coffee_drinks (name, price, native_price, description)" +
@@ -37,7 +39,7 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
 
       if(result.next()) {
         var products: List[Product] = Nil
-        ProductDao.findAllByCoffeeDrink(result.getString(1)).foreach { case Some(i) => products = i }
+        ProductDao.findAllByCoffeeDrink(result.getString(1)).onComplete(prod => products = prod.get.get)
 
         Future.successful(Option(CoffeeDrink(result.getString(1), result.getDouble(2), result.getDouble(3), products, result.getString(4))))
       } else
@@ -52,7 +54,7 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
       convertResultToList(rs,
         result => {
           var products: List[Product] = Nil
-          ProductDao.findAllByCoffeeDrink(result.getString(1)).foreach { case Some(i) => products = i }
+          ProductDao.findAllByCoffeeDrink(result.getString(1)).onComplete(prod => products = prod.get.get)
 
           CoffeeDrink(rs.getString(1), rs.getDouble(2), rs.getDouble(3), products, rs.getString(4))
         })
