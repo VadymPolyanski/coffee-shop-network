@@ -1,11 +1,9 @@
 package com.polianskyi.csn.dao
 
-import java.sql.ResultSet
-
+import com.polianskyi.csn.ConverterUtil._
 import com.polianskyi.csn.domain.CoffeeHouse
 import com.polianskyi.csn.system.PostgresConnector
 
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
 
 object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
@@ -89,16 +87,5 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
 
       Future.successful(Option(entity))
     })
-  }
-
-  private def convertResultToList[T](rs: ResultSet, act: ResultSet => T): Future[Option[List[T]]] = {
-    val temporaryBuffer = ListBuffer.empty[T]
-    if (rs.next()) {
-      while ( {rs.next}) {
-        temporaryBuffer += act(rs)
-      }
-      Future.successful(Option(temporaryBuffer.toList))
-    } else
-      Future.successful(Option(Nil))
   }
 }
