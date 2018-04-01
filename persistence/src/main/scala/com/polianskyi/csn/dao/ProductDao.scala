@@ -11,7 +11,6 @@ object ProductDao extends GenericDao[Product, String] {
     "FROM products as p INNER JOIN coffee_drinks_products ON p.name = coffee_drinks_products.coffee_drink_name" +
   "\n WHERE coffee_drinks_products.coffee_drink_name="
 
-  override def findByPk(id: String): Future[Option[Product]] = ???
 
   def findAllByCoffeeDrink(coffeeDrinkName: String): Future[Option[List[Product]]] = {
     PostgresConnector.withStatement(stmt => {
@@ -21,6 +20,8 @@ object ProductDao extends GenericDao[Product, String] {
         result => Product(rs.getString(1), rs.getDouble(2), rs.getString(3), rs.getString(4)))
     })
   }
+
+  override def findByPk(id: String): Future[Option[Product]] = ???
 
   override def findAll(): Future[Option[List[Product]]] = ???
 

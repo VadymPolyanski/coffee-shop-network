@@ -38,7 +38,7 @@ class CoffeeDrinkHandler extends Actor {
       val _sender = sender()
       findAll().foreach {
         case Some(i) => _sender ! i
-        case Some(Nil) => Nil
+        case _ => Nil
       }
 
     case GetCoffeeDrink(name) =>
