@@ -1,11 +1,9 @@
 package com.polianskyi.csn.dao
 
-import java.sql.ResultSet
-
+import com.polianskyi.csn.ConverterUtil._
 import com.polianskyi.csn.domain.CoffeeHouse
 import com.polianskyi.csn.system.PostgresConnector
 
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
 
 object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
@@ -28,7 +26,7 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
     "FROM coffee_houses;"
 
 
-  override def findByPk(address: String): Future[Option[CoffeeHouse]] = {
+  override def findByPk(address: String): Future[Option[CoffeeHouse]] =
     PostgresConnector.withPreparedStatement(selectByAddress, pstmt => {
       pstmt.setString(1, address)
 
@@ -40,24 +38,21 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
         Future.successful(Option.empty)
 
     })
-  }
 
-  override def findAll(): Future[Option[List[CoffeeHouse]]] = {
+  override def findAll(): Future[Option[List[CoffeeHouse]]] =
     PostgresConnector.withStatement(stmt => {
       val rs = stmt.executeQuery(selectAll)
       convertResultToList(rs,
-        result => CoffeeHouse(rs.getString(1), rs.getDouble(2), rs.getDouble(3), rs.getString(4)))
+        result => CoffeeHouse(result.getString(1), result.getDouble(2), result.getDouble(3), result.getString(4)))
     })
-  }
 
-  def findAllAddresses(): Future[Option[List[String]]] = {
+  def findAllAddresses(): Future[Option[List[String]]] =
     PostgresConnector.withStatement(stmt => {
       val rs = stmt.executeQuery(selectAllAddresses)
       convertResultToList(rs, result => result.getString(1))
     })
-  }
 
-  override def delete(address: String): Future[Option[String]] = {
+  override def delete(address: String): Future[Option[String]] =
     PostgresConnector.withPreparedStatement(delete, pstmt => {
       pstmt.setString(1, address)
       if (pstmt.execute())
@@ -65,7 +60,6 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
        else
         Future.successful(Option.empty)
     })
-  }
 
   override def create(entity: CoffeeHouse): Future[Option[CoffeeHouse]] =
     PostgresConnector.withPreparedStatement(insert, pstmt => {
@@ -78,7 +72,7 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
       Future.successful(Option(entity))
     })
 
-  override def update(entity: CoffeeHouse): Future[Option[CoffeeHouse]] = {
+  override def update(entity: CoffeeHouse): Future[Option[CoffeeHouse]] =
     PostgresConnector.withPreparedStatement(update, pstmt => {
       pstmt.setString(1, entity.address)
       pstmt.setDouble(2, entity.space)
@@ -89,16 +83,4 @@ object CoffeeHouseDao extends GenericDao[CoffeeHouse, String] {
 
       Future.successful(Option(entity))
     })
-  }
-
-  private def convertResultToList[T](rs: ResultSet, act: ResultSet => T): Future[Option[List[T]]] = {
-    val temporaryBuffer = ListBuffer.empty[T]
-    if (rs.next()) {
-      while ( {rs.next}) {
-        temporaryBuffer += act(rs)
-      }
-      Future.successful(Option(temporaryBuffer.toList))
-    } else
-      Future.successful(Option(Nil))
-  }
 }
