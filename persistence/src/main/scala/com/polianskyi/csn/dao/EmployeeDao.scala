@@ -1,7 +1,6 @@
 package com.polianskyi.csn.dao
 
 import com.polianskyi.csn.ConverterUtil.convertResultToList
-import com.polianskyi.csn.dao.CoffeeHouseDao.insert
 import com.polianskyi.csn.domain.Employee
 import com.polianskyi.csn.system.PostgresConnector
 
@@ -11,6 +10,9 @@ object EmployeeDao extends GenericDao[Employee, String] {
   private val insert: String = "INSERT INTO employees (full_name, birthday_date, mobile_number, address, passport, sex)" +
     "\nVALUES (?, ?, ?, ?, ?, ?);"
 
+  private val select: String = "SELECT full_name, birthday_date, mobile_number, address, passport, sex " +
+    "FROM employees WHERE full_name=?;"
+
   private val selectAll: String = "SELECT * " +
     "FROM employees;"
 
@@ -18,7 +20,18 @@ object EmployeeDao extends GenericDao[Employee, String] {
     "FROM employees INNER JOIN contracts ON contracts.employee=employees.full_name" +
     "WHERE contracts.caffe_address=?;"
 
-  override def findByPk(id: String): Future[Option[Employee]] = ???
+  override def findByPk(id: String): Future[Option[Employee]] =
+    PostgresConnector.withPreparedStatement(select, pstmt => {
+      pstmt.setString(1, id)
+
+      val result = pstmt.executeQuery()
+
+      if(result.next())
+        Future.successful(Option(Employee(result.getString(1), result.getLong(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6))))
+      else
+        Future.successful(Option.empty)
+
+    })
 
   override def findAll(): Future[Option[List[Employee]]] = {
     PostgresConnector.withStatement(stmt => {
