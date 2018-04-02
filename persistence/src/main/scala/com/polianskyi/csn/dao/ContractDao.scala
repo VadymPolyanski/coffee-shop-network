@@ -1,7 +1,5 @@
 package com.polianskyi.csn.dao
 
-import com.polianskyi.csn.ConverterUtil.convertResultToList
-import com.polianskyi.csn.dao.EmployeeDao.selectAllByCoffeeHouse
 import com.polianskyi.csn.domain.Contract
 import com.polianskyi.csn.system.PostgresConnector
 
@@ -38,13 +36,45 @@ object ContractDao extends GenericDao[Contract, Int]{
 
     })
 
-  override def findByPk(id: Int): Future[Option[Contract]] = ???
+  override def create(entity: Contract): Future[Option[Contract]] =
+    PostgresConnector.withPreparedStatement(insert, pstmt => {
+    pstmt.setInt(1, entity.contractNumber)
+    pstmt.setString(2, entity.workPosition)
+    pstmt.setLong(3, entity.startDate)
+    pstmt.setLong(4, entity.endDate)
+    pstmt.setInt(5, entity.hoursPerWeek)
+
+      if(EmployeeDao.findByPk(entity.employee.fullName).value.get.get.isEmpty)
+        EmployeeDao.create(entity.employee)
+    pstmt.setString(6, entity.employee.fullName)
+
+      if(CoffeeHouseDao.findByPk(entity.coffeeHouse.address).value.get.get.isEmpty)
+        CoffeeHouseDao.create(entity.coffeeHouse)
+    pstmt.setString(7, entity.coffeeHouse.address)
+
+    pstmt.setDouble(8, entity.salary)
+    pstmt.setInt(9, entity.vacation)
+    pstmt.execute()
+
+    Future.successful(Option(entity))
+  })
+
+  override def findByPk(contractNumber: Int): Future[Option[Contract]] =
+    PostgresConnector.withPreparedStatement(selectByContractNumber, pstmt => {
+      pstmt.setInt(1, contractNumber)
+
+      val result = pstmt.executeQuery()
+
+      if(result.next())
+        Future.successful(Option(Contract(result.getInt(1), result.getString(2), result.getLong(3), result.getLong(4), result.getInt(5), null, null, result.getDouble(8), result.getInt(9))))
+      else
+        Future.successful(Option.empty)
+
+    })
 
   override def findAll(): Future[Option[List[Contract]]] = ???
 
   override def delete(id: Int): Future[Option[Int]] = ???
-
-  override def create(entity: Contract): Future[Option[Contract]] = ???
 
   override def update(entity: Contract): Future[Option[Contract]] = ???
 }

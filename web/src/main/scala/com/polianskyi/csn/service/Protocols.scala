@@ -2,9 +2,10 @@ package com.polianskyi.csn.service
 
 import com.polianskyi.csn.CoffeeDrinkHandler.{CoffeeDrinkDeleted, CoffeeDrinkNotFound}
 import com.polianskyi.csn.CoffeeHouseHandler.{CoffeeHouseDeleted, CoffeeHouseNotFound}
+import com.polianskyi.csn.ContractHandler.{ContractDeleted, ContractNotFound}
 import com.polianskyi.csn.EmployeeHandler.{EmployeeDeleted, EmployeeNotFound}
 import com.polianskyi.csn.ProductHandler.{ProductDeleted, ProductNotFound}
-import com.polianskyi.csn.domain.{CoffeeDrink, CoffeeHouse, Employee, Product}
+import com.polianskyi.csn.domain._
 import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
 trait Protocols extends DefaultJsonProtocol{
@@ -19,6 +20,11 @@ trait Protocols extends DefaultJsonProtocol{
   implicit val deleteEmployeeFormat: RootJsonFormat[EmployeeDeleted] = jsonFormat1(EmployeeDeleted.apply)
   implicit val employeeNotFoundFormat: RootJsonFormat[EmployeeNotFound] = jsonFormat1(EmployeeNotFound.apply)
   implicit val employeeFormat: RootJsonFormat[Employee] = jsonFormat6(Employee.apply)
+
+  implicit val deleteContractFormat: RootJsonFormat[ContractDeleted] = jsonFormat1(ContractDeleted.apply)
+  implicit val contractNotFoundFormat: RootJsonFormat[ContractNotFound] = jsonFormat1(ContractNotFound.apply)
+  implicit val positionFormat: RootJsonFormat[Position] = jsonFormat4(Position.apply)
+  implicit val contractFormat: RootJsonFormat[Contract] = jsonFormat9(Contract.apply)
 
   implicit val deleteCoffeeDrinkFormat: RootJsonFormat[CoffeeDrinkDeleted] = jsonFormat1(CoffeeDrinkDeleted.apply)
   implicit val coffeeDrinkNotFoundFormat: RootJsonFormat[CoffeeDrinkNotFound] = jsonFormat1(CoffeeDrinkNotFound.apply)
