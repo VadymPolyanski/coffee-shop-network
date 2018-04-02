@@ -2,6 +2,7 @@ package com.polianskyi.csn.domain
 
 final case class CoffeeHouse(address: String, space: Double, rentalPrice: Double, mobileNumber: String)
 final case class CoffeeDrink(name: String, price: Double, nativePrice: Double, products: List[Product], description: String)
+final case class SalesReport(coffee_drink: CoffeeDrink, employee: Employee, priceWithVat: Double, saleDate: Long, coffeeHouse: CoffeeHouse)
 final case class Product(name: String, price: Double, unitOfMeasurement: String, description: String)
 final case class Position(name: String, avg_salary: Double, priority: Integer, description: String)
 
@@ -21,3 +22,5 @@ final case class Employee(fullName: String,
                           address: String,
                           passport: String,
                           sex: String)
+
+final case class SalesReportPK(coffee_drink: CoffeeDrink, employee: Employee, saleDate: Long)
