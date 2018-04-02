@@ -11,8 +11,7 @@ import com.polianskyi.csn.ContractHandler._
 import com.polianskyi.csn.domain.Contract
 import com.polianskyi.csn.service.Protocols
 
-
-trait ContractHttpService extends Protocols with GenericHttpService{
+trait ContractHttpService extends Protocols with GenericHttpService {
   def contractHandler: ActorRef
 
   val contractRoutes: Route =

@@ -6,8 +6,8 @@ import com.polianskyi.csn.dao.ProductDao._
 import com.polianskyi.csn.domain.Product
 
 import scala.concurrent.ExecutionContextExecutor
-object ProductHandler {
 
+object ProductHandler {
   def props(): Props = Props(new ProductHandler())
 
   case class Create(name: String, price: Double, unitOfMeasurement: String, description: String)
