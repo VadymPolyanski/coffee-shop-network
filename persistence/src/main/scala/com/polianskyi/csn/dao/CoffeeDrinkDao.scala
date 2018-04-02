@@ -1,13 +1,11 @@
 package com.polianskyi.csn.dao
 
-import com.polianskyi.csn.domain.CoffeeDrink
-import com.polianskyi.csn.domain.Product
-import com.polianskyi.csn.system.PostgresConnector
 import com.polianskyi.csn.ConverterUtil._
-import scala.concurrent.ExecutionContext.Implicits.global
+import com.polianskyi.csn.domain.{CoffeeDrink, Product}
+import com.polianskyi.csn.system.PostgresConnector
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.Try
 
 object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
   private val insert: String = "INSERT INTO coffee_drinks (name, price, native_price, description)" +
@@ -31,7 +29,7 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
     "FROM coffee_drinks;"
 
 
-  override def findByPk(name: String): Future[Option[CoffeeDrink]] = {
+  override def findByPk(name: String): Future[Option[CoffeeDrink]] =
     PostgresConnector.withPreparedStatement(selectByName, pstmt => {
       pstmt.setString(1, name)
 
@@ -46,9 +44,8 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
         Future.successful(Option.empty)
 
     })
-  }
 
-  override def findAll(): Future[Option[List[CoffeeDrink]]] = {
+  override def findAll(): Future[Option[List[CoffeeDrink]]] =
     PostgresConnector.withStatement(stmt => {
       val rs = stmt.executeQuery(selectAll)
       convertResultToList(rs,
@@ -59,9 +56,8 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
           CoffeeDrink(result.getString(1), result.getDouble(2), result.getDouble(3), products, result.getString(4))
         })
     })
-  }
 
-  override def delete(name: String): Future[Option[String]] = {
+  override def delete(name: String): Future[Option[String]] =
     PostgresConnector.withPreparedStatement(delete, pstmt => {
       pstmt.setString(1, name)
       if (pstmt.execute()){
@@ -70,7 +66,6 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
       } else
         Future.successful(Option.empty)
     })
-  }
 
   override def create(entity: CoffeeDrink): Future[Option[CoffeeDrink]] =
     PostgresConnector.withPreparedStatement(insert, pstmt => {
@@ -92,7 +87,7 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
       Future.successful(Option(entity))
     })
 
-  override def update(entity: CoffeeDrink): Future[Option[CoffeeDrink]] = {
+  override def update(entity: CoffeeDrink): Future[Option[CoffeeDrink]] =
     PostgresConnector.withPreparedStatement(update, pstmt => {
       pstmt.setString(1, entity.name)
       pstmt.setDouble(2, entity.price)
@@ -114,5 +109,4 @@ object CoffeeDrinkDao extends GenericDao[CoffeeDrink, String] {
 
       Future.successful(Option(entity))
     })
-  }
 }
