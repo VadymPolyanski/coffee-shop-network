@@ -17,57 +17,59 @@ trait CoffeeDrinkHttpService extends Protocols with GenericHttpService{
   val coffeeDrinkRoutes: Route =
     cors(corsSettings) {
       logRequestResult("coffee-shop-network") {
-        pathPrefix("coffee-drinks") {
-          path("create") {
-            post {
-              entity(as[CoffeeDrink]) { ch =>
-                complete {
-                  (coffeeDrinkHandler ? Create(ch.name, ch.price, ch.nativePrice, ch.products, ch.description)).mapTo[CoffeeDrink]
+        pathPrefix("api") {
+          pathPrefix("coffee-drinks") {
+            path("create") {
+              post {
+                entity(as[CoffeeDrink]) { ch =>
+                  complete {
+                    (coffeeDrinkHandler ? Create(ch.name, ch.price, ch.nativePrice, ch.products, ch.description)).mapTo[CoffeeDrink]
+                  }
                 }
               }
-            }
-          } ~ path("all") {
-            get {
-              complete {
-                (coffeeDrinkHandler ? GetAllCoffeeDrinks()).map {
-                  case list: List[CoffeeDrink] => Some(list)
-                  case Nil => Some(Nil)
-                }
-              }
-            }
-          } ~
-            path(Segment) { name =>
+            } ~ path("all") {
               get {
                 complete {
-                  (coffeeDrinkHandler ? GetCoffeeDrink(name)).map {
-                    case CoffeeDrink(n, p, np, pr, d) => Some(CoffeeDrink(n, p, np, pr, d))
-                    case _ => None
+                  (coffeeDrinkHandler ? GetAllCoffeeDrinks()).map {
+                    case list: List[CoffeeDrink] => Some(list)
+                    case Nil => Some(Nil)
                   }
                 }
               }
             } ~
-            path(Segment) { name =>
-              put {
-                entity(as[CoffeeDrink]) { ch =>
+              path(Segment) { name =>
+                get {
                   complete {
-                    (coffeeDrinkHandler ? Update(ch.name, ch.price, ch.nativePrice, ch.products, ch.description)).map {
-                      case false => InternalServerError -> s"Could not update coffee drink with name $name"
-                      case _ => NoContent -> ""
+                    (coffeeDrinkHandler ? GetCoffeeDrink(name)).map {
+                      case CoffeeDrink(n, p, np, pr, d) => Some(CoffeeDrink(n, p, np, pr, d))
+                      case _ => None
+                    }
+                  }
+                }
+              } ~
+              path(Segment) { name =>
+                put {
+                  entity(as[CoffeeDrink]) { ch =>
+                    complete {
+                      (coffeeDrinkHandler ? Update(ch.name, ch.price, ch.nativePrice, ch.products, ch.description)).map {
+                        case false => InternalServerError -> s"Could not update coffee drink with name $name"
+                        case _ => NoContent -> ""
+                      }
+                    }
+                  }
+                }
+              } ~
+              path(Segment) { name =>
+                delete {
+                  complete {
+                    (coffeeDrinkHandler ? DeleteCoffeeDrink(name)).map {
+                      case CoffeeDrinkNotFound(`name`) => InternalServerError -> s"Could not delete coffee drink with name $name"
+                      case _: CoffeeDrinkDeleted => NoContent -> ""
                     }
                   }
                 }
               }
-            } ~
-            path(Segment) { name =>
-              delete {
-                complete {
-                  (coffeeDrinkHandler ? DeleteCoffeeDrink(name)).map {
-                    case CoffeeDrinkNotFound(`name`) => InternalServerError -> s"Could not delete coffee drink with name $name"
-                    case _: CoffeeDrinkDeleted => NoContent -> ""
-                  }
-                }
-              }
-            }
+          }
         }
       }
     }

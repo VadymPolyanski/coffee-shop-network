@@ -18,57 +18,59 @@ trait ProductHttpService extends Protocols with GenericHttpService{
   val productRoutes: Route =
     cors(corsSettings) {
       logRequestResult("coffee-shop-network") {
-        pathPrefix("products") {
-          path("create") {
-            post {
-              entity(as[Product]) { ch =>
-                complete {
-                  (productHandler ? Create(ch.name, ch.price, ch.unitOfMeasurement, ch.description)).mapTo[Product]
+        pathPrefix("api") {
+          pathPrefix("products") {
+            path("create") {
+              post {
+                entity(as[Product]) { ch =>
+                  complete {
+                    (productHandler ? Create(ch.name, ch.price, ch.unitOfMeasurement, ch.description)).mapTo[Product]
+                  }
                 }
               }
-            }
-          } ~ path("all") {
-            get {
-              complete {
-                (productHandler ? GetAllProducts()).map {
-                  case list: List[Product] => Some(list)
-                  case Nil => Some(Nil)
-                }
-              }
-            }
-          } ~
-            path(Segment) { name =>
+            } ~ path("all") {
               get {
                 complete {
-                  (productHandler ? GetProduct(name)).map {
-                    case Product(n, p, u, d) => Some(Product(n, p, u, d))
-                    case _ => None
+                  (productHandler ? GetAllProducts()).map {
+                    case list: List[Product] => Some(list)
+                    case Nil => Some(Nil)
                   }
                 }
               }
             } ~
-            path(Segment) { name =>
-              put {
-                entity(as[Product]) { ch =>
+              path(Segment) { name =>
+                get {
                   complete {
-                    (productHandler ? Update(ch.name, ch.price, ch.unitOfMeasurement, ch.description)).map {
-                      case false => InternalServerError -> s"Could not update product with name $name"
-                      case _ => NoContent -> ""
+                    (productHandler ? GetProduct(name)).map {
+                      case Product(n, p, u, d) => Some(Product(n, p, u, d))
+                      case _ => None
+                    }
+                  }
+                }
+              } ~
+              path(Segment) { name =>
+                put {
+                  entity(as[Product]) { ch =>
+                    complete {
+                      (productHandler ? Update(ch.name, ch.price, ch.unitOfMeasurement, ch.description)).map {
+                        case false => InternalServerError -> s"Could not update product with name $name"
+                        case _ => NoContent -> ""
+                      }
+                    }
+                  }
+                }
+              } ~
+              path(Segment) { name =>
+                delete {
+                  complete {
+                    (productHandler ? DeleteProduct(name)).map {
+                      case ProductNotFound(`name`) => InternalServerError -> s"Could not delete product with name $name"
+                      case _: ProductDeleted => NoContent -> ""
                     }
                   }
                 }
               }
-            } ~
-            path(Segment) { name =>
-              delete {
-                complete {
-                  (productHandler ? DeleteProduct(name)).map {
-                    case ProductNotFound(`name`) => InternalServerError -> s"Could not delete product with name $name"
-                    case _: ProductDeleted => NoContent -> ""
-                  }
-                }
-              }
-            }
+          }
         }
       }
     }
