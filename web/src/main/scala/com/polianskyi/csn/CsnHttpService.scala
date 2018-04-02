@@ -6,12 +6,12 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import com.polianskyi.csn.http.{CoffeeDrinkHttpService, CoffeeHouseHttpService, ProductHttpService}
+import com.polianskyi.csn.http.{CoffeeDrinkHttpService, CoffeeHouseHttpService, EmployeeHttpService}
 import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.ExecutionContextExecutor
 
-object CsnHttpService extends App with CoffeeHouseHttpService with CoffeeDrinkHttpService with ProductHttpService{
+object CsnHttpService extends App with CoffeeHouseHttpService with CoffeeDrinkHttpService with EmployeeHttpService{
   import scala.concurrent.duration._
 
   override implicit def requestTimeout: Timeout = Timeout(50 seconds)
