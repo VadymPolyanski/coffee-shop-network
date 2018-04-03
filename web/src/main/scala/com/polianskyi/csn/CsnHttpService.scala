@@ -12,7 +12,7 @@ import com.typesafe.config.ConfigFactory
 import scala.concurrent.ExecutionContextExecutor
 
 object CsnHttpService extends App with CoffeeHouseHttpService with CoffeeDrinkHttpService
-  with EmployeeHttpService with ProductHttpService with  ContractHttpService {
+  with EmployeeHttpService with ProductHttpService with  ContractHttpService with SalesReportHttpService {
   import scala.concurrent.duration._
 
   override implicit def requestTimeout: Timeout = Timeout(50 seconds)
@@ -29,8 +29,9 @@ object CsnHttpService extends App with CoffeeHouseHttpService with CoffeeDrinkHt
   override def productHandler = system.actorOf(ProductHandler.props())
   override def contractHandler = system.actorOf(ContractHandler.props())
   override def employeeHandler = system.actorOf(EmployeeHandler.props())
+  override def salesReportHandler = system.actorOf(SalesReportHandler.props())
 
 
-  Http().bindAndHandle(coffeeHouseRoutes ~ coffeeDrinkRoutes ~ productRoutes ~ contractRoutes ~ employeeRoutes,
+  Http().bindAndHandle(coffeeHouseRoutes ~ coffeeDrinkRoutes ~ productRoutes ~ contractRoutes ~ employeeRoutes ~ salesReportRoutes,
     config.getString("http.interface"), config.getInt("http.port"))
 }
