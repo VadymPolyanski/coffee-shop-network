@@ -36,29 +36,36 @@ trait SalesReportHttpService extends Protocols with GenericHttpService{
                   }
                 }
               }
+            } ~ path(Segment) { address =>
+              get {
+                complete {
+                  (salesReportHandler ? GetSalesReportsByCoffeeHouse(address)).map {
+                    case list: List[SalesReport] => Some(list)
+                    case Nil => Some(Nil)
+                  }
+                }
+              }
+            } ~ path(Segment) { fullName =>
+              get {
+                complete {
+                  (salesReportHandler ? GetSalesReportsByEmployee(fullName)).map {
+                    case list: List[SalesReport] => Some(list)
+                    case Nil => Some(Nil)
+                  }
+                }
+              }
+            } ~ path(Segment) { _ =>
+              get {
+                entity(as[SalesReportPK]) { pk =>
+                  complete {
+                    (salesReportHandler ? GetSalesReport(pk)).map {
+                      case SalesReport(d, e, p, s, c) => Some(SalesReport(d, e, p, s, c))
+                      case _ => None
+                    }
+                  }
+                }
+              }
             } ~
-              path(Segment) { address =>
-                get {
-                    complete {
-                      (salesReportHandler ? GetSalesReportsByCoffeeHouse(address)).map {
-                        case list: List[SalesReport] => Some(list)
-                        case Nil => Some(Nil)
-                      }
-                    }
-                  }
-                }
-              } ~ path(Segment) { _ =>
-                get {
-                  entity(as[SalesReportPK]) { pk =>
-                    complete {
-                      (salesReportHandler ? GetSalesReport(pk)).map {
-                        case SalesReport(d, e, p, s, c) => Some(SalesReport(d, e, p, s, c))
-                        case _ => None
-                      }
-                    }
-                  }
-                }
-              } ~
               path(Segment) { name =>
                 put {
                   entity(as[SalesReport]) { sr =>
