@@ -24,7 +24,7 @@ trait Protocols extends DefaultJsonProtocol{
 
   implicit val deleteContractFormat: RootJsonFormat[ContractDeleted] = jsonFormat1(ContractDeleted.apply)
   implicit val contractNotFoundFormat: RootJsonFormat[ContractNotFound] = jsonFormat1(ContractNotFound.apply)
-  implicit val positionFormat: RootJsonFormat[Position] = jsonFormat4(Position.apply)
+//  implicit val positionFormat: RootJsonFormat[Position] = jsonFormat4(Position.apply)
   implicit val contractFormat: RootJsonFormat[Contract] = jsonFormat9(Contract.apply)
 
   implicit val deleteSalesReportFormat: RootJsonFormat[SalesReportDeleted] = jsonFormat1(SalesReportDeleted.apply)

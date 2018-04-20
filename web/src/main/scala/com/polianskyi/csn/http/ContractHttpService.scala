@@ -63,7 +63,7 @@ trait ContractHttpService extends Protocols with GenericHttpService {
                 delete {
                   complete {
                     (contractHandler ? DeleteContract(contractNumber.toInt)).map {
-                      case ContractNotFound(`contractNumber`.toInt) => InternalServerError -> s"Could not delete contract with contractNumber $contractNumber"
+                      case ContractNotFound(`contractNumber`) => InternalServerError -> s"Could not delete contract with contractNumber $contractNumber"
                       case _: ContractDeleted => NoContent -> ""
                     }
                   }

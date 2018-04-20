@@ -33,7 +33,7 @@ object ContractHandler {
   case class GetContractByEmployee(employee: String)
   case class GetAllContracts()
   case class DeleteContract(contractNumber: Int)
-  case class ContractNotFound(contractNumber: Int)
+  case class ContractNotFound(contractNumber: String)
   case class ContractDeleted(contractNumber: Int)
   case class ContractCreatingError(contractNumber: Int, message: String)
 }
@@ -65,21 +65,21 @@ class ContractHandler extends Actor {
       val _sender = sender()
       findByPk(contractNumber).foreach {
         case Some(i) => _sender ! Contract(i.contractNumber, i.workPosition, i.startDate, i.endDate, i.hoursPerWeek, i.employee, i.coffeeHouse, i.salary, i.vacation)
-        case None => _sender ! ContractNotFound(contractNumber)
+        case None => _sender ! ContractNotFound(contractNumber.toString)
       }
 
     case GetContractByEmployee(fullName) =>
       val _sender = sender()
       findByEmployee(fullName).foreach {
         case Some(i) => _sender ! Contract(i.contractNumber, i.workPosition, i.startDate, i.endDate, i.hoursPerWeek, i.employee, i.coffeeHouse, i.salary, i.vacation)
-        case None => _sender ! ContractNotFound(0)
+        case None => _sender ! ContractNotFound("0")
       }
 
     case DeleteContract(fullName) =>
       val _sender = sender()
       delete(fullName).foreach {
         case i if i != null => _sender ! ContractDeleted(fullName)
-        case _ => _sender ! ContractNotFound(fullName)
+        case _ => _sender ! ContractNotFound(fullName.toString)
       }
   }
 }
