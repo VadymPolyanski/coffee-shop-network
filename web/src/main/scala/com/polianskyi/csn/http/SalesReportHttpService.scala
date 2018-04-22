@@ -32,7 +32,7 @@ trait SalesReportHttpService extends Protocols with GenericHttpService{
                 complete {
                   (salesReportHandler ? GetAllSalesReports()).map {
                     case list: List[SalesReport] => Some(list)
-                    case Nil => Some(Nil)
+                    case _ => Some(Nil)
                   }
                 }
               }

@@ -32,7 +32,7 @@ trait ContractHttpService extends Protocols with GenericHttpService {
                 complete {
                   (contractHandler ? GetAllContracts()).map {
                     case list: List[Contract] => Some(list)
-                    case Nil => Some(Nil)
+                    case _ => Some(Nil)
                   }
                 }
               }

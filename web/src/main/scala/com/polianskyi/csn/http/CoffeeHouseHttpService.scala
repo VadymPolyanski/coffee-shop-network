@@ -18,7 +18,7 @@ trait CoffeeHouseHttpService extends Protocols with GenericHttpService {
     cors(corsSettings) {
       logRequestResult("coffee-shop-network") {
         pathPrefix("api") {
-          pathPrefix("coffe-houses") {
+          pathPrefix("coffee-houses") {
             path("create") {
               post {
                 entity(as[CoffeeHouse]) { ch =>
