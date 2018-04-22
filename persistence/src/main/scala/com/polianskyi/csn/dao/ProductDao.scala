@@ -14,6 +14,8 @@ object ProductDao extends GenericDao[Product, String] {
   private val selectAll: String = "SELECT * " +
     "FROM products;"
 
+  private val insert: String = "INSERT INTO public.products(name, price, unit_of_measurement, description)\n" +
+    "VALUES (?, ?, ?, ?);"
 
   def findAllByCoffeeDrink(coffeeDrinkName: String): Future[Option[List[Product]]] = {
     PostgresConnector.withStatement(stmt => {
@@ -36,7 +38,16 @@ object ProductDao extends GenericDao[Product, String] {
 
   override def delete(id: String): Future[Option[String]] = ???
 
-  override def create(entity: Product): Future[Option[Product]] = ???
+  override def create(entity: Product): Future[Option[Product]] =
+    PostgresConnector.withPreparedStatement(insert, pstmt => {
+      pstmt.setString(1, entity.name)
+      pstmt.setDouble(2, entity.price)
+      pstmt.setString(3, entity.unitOfMeasurement)
+      pstmt.setString(4, entity.description)
+      pstmt.execute()
+
+      Future.successful(Option(entity))
+    })
 
   override def update(entity: Product): Future[Option[Product]] = ???
 
