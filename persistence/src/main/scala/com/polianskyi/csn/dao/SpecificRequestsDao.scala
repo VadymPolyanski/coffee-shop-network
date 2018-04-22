@@ -18,14 +18,14 @@ object SpecificRequestsDao {
   val getEmployeesByPositionAndCoffeeHouseAndDateSql: String = "" +
     "SELECT full_name, birthday_date, mobile_number, sex\n" +
     "FROM employees e\n" +
-    "INNER JOIN contract c ON c.employee = e.full_name\n" +
-    "WHERE  c.coffee_address = ? AND c.position = ? AND c.start_date > ?;"
+    "INNER JOIN contracts c ON c.employee = e.full_name\n" +
+    "WHERE  c.coffee_house = ? AND c.position = ? AND c.start_date > ?;"
 
 
   val getGoodsByProductsAndSalesReportAndCoffeeHouseAndDateSql: String = "" +
     "SELECT coffee_drink, employee, cd.price, cd.description\n" +
     "FROM sales_reports sr\n" +
-    "INNER JOIN coffee_drink cd ON cd.name = sr.coffee_drink\n" +
+    "INNER JOIN coffee_drinks cd ON cd.name = sr.coffee_drink\n" +
     "WHERE sr.coffee_house = ? AND sr.sale_date > ?;"
 
 
@@ -33,14 +33,14 @@ object SpecificRequestsDao {
     "SELECT ch.address, ch.space, ch.mobile_number, COUNT(*) AS sales\n" +
     "FROM sales_reports sr\n" +
     "INNER JOIN coffee_houses ch ON ch.address = sr.coffee_house\n" +
-    "WHERE sr.coffee_drink = ? AND sr.sales_date > ?\n" +
-    "GROUP BY sr.coffee_house\n" +
+    "WHERE sr.coffee_drink = ? AND sr.sale_date > ?\n" +
+    "GROUP BY ch.address\n" +
     "ORDER BY sales\n" +
     "LIMIT 1;"
 
 
   val getContractByEmployeeAgeAndSalarySql: String = "" +
-    "SELECT contract_number, employee, work_position, start_date, hours_per_week, salary\n" +
+    "SELECT contract_number, employee, position, start_date, hours_per_week, salary\n" +
     "FROM contracts c\n" +
     "INNER JOIN employees e ON e.full_name = c.employee\n" +
     "WHERE e.birthday_date > ? AND c.salary > ?;"
@@ -53,7 +53,7 @@ object SpecificRequestsDao {
 
 
   val getPositionBySalaryAndCoffeeHouseSql: String = "" +
-    "SELECT name, avg_salary\n" +
+    "SELECT DISTINCT name, avg_salary\n" +
     "FROM positions p\n" +
     "INNER JOIN contracts c ON c.position = p.name\n" +
     "WHERE c.coffee_house = ? AND p.avg_salary > ?;"
@@ -67,11 +67,11 @@ object SpecificRequestsDao {
 
 
   val getCoffeeHouseByMaxSalesReportsAndFromDateSql: String = "" +
-    "SELECT address, mobile_number, space SUM(sr.price_with_vat)\n" +
+    "SELECT ch.address, ch.mobile_number, ch.space, SUM(sr.price_with_vat) sales\n" +
     "FROM coffee_houses ch\n" +
-    "INNER JOIN sales_report sr ON ch.address = sr.coffee_house\n" +
+    "INNER JOIN sales_reports sr ON ch.address = sr.coffee_house\n" +
     "WHERE sr.sale_date > ?\n" +
-    "GROUP BY sr.coffee_house;"
+    "GROUP BY ch.address;"
 
 
   val getEmployeeByCoffeeHouseAndMaxSalesReportSql: String = "" +
