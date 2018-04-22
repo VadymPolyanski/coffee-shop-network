@@ -32,7 +32,7 @@ trait ContractHttpService extends Protocols with GenericHttpService {
                 complete {
                   (contractHandler ? GetAllContracts()).map {
                     case list: List[Contract] => Some(list)
-                    case Nil => Some(Nil)
+                    case _ => Some(Nil)
                   }
                 }
               }
@@ -63,7 +63,7 @@ trait ContractHttpService extends Protocols with GenericHttpService {
                 delete {
                   complete {
                     (contractHandler ? DeleteContract(contractNumber.toInt)).map {
-                      case ContractNotFound(`contractNumber`.toInt) => InternalServerError -> s"Could not delete contract with contractNumber $contractNumber"
+                      case ContractNotFound(`contractNumber`) => InternalServerError -> s"Could not delete contract with contractNumber $contractNumber"
                       case _: ContractDeleted => NoContent -> ""
                     }
                   }

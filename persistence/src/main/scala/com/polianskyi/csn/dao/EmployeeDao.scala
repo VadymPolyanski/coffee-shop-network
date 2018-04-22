@@ -52,6 +52,7 @@ object EmployeeDao extends GenericDao[Employee, String] {
   }
 
   override def delete(id: String): Future[Option[String]] = ???
+
   override def create(entity: Employee): Future[Option[Employee]] =
     PostgresConnector.withPreparedStatement(insert, pstmt => {
       pstmt.setString(1, entity.fullName)

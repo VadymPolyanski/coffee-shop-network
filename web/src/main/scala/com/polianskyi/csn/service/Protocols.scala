@@ -24,16 +24,16 @@ trait Protocols extends DefaultJsonProtocol{
 
   implicit val deleteContractFormat: RootJsonFormat[ContractDeleted] = jsonFormat1(ContractDeleted.apply)
   implicit val contractNotFoundFormat: RootJsonFormat[ContractNotFound] = jsonFormat1(ContractNotFound.apply)
-  implicit val positionFormat: RootJsonFormat[Position] = jsonFormat4(Position.apply)
+//  implicit val positionFormat: RootJsonFormat[Position] = jsonFormat4(Position.apply)
   implicit val contractFormat: RootJsonFormat[Contract] = jsonFormat9(Contract.apply)
-
-  implicit val deleteSalesReportFormat: RootJsonFormat[SalesReportDeleted] = jsonFormat1(SalesReportDeleted.apply)
-  implicit val salesReportNotFoundFormat: RootJsonFormat[SalesReportNotFound] = jsonFormat1(SalesReportNotFound.apply)
-  implicit val salesReportPKFormat: RootJsonFormat[SalesReportPK] = jsonFormat3(SalesReportPK.apply)
-  implicit val salesReportFormat: RootJsonFormat[SalesReport] = jsonFormat5(SalesReport.apply)
 
   implicit val deleteCoffeeDrinkFormat: RootJsonFormat[CoffeeDrinkDeleted] = jsonFormat1(CoffeeDrinkDeleted.apply)
   implicit val coffeeDrinkNotFoundFormat: RootJsonFormat[CoffeeDrinkNotFound] = jsonFormat1(CoffeeDrinkNotFound.apply)
   implicit val productFormat: RootJsonFormat[Product] = jsonFormat4(Product.apply)
   implicit val coffeeDrinkFormat: RootJsonFormat[CoffeeDrink] = jsonFormat5(CoffeeDrink.apply)
+
+  implicit val deleteSalesReportFormat: RootJsonFormat[SalesReportDeleted] = jsonFormat1(SalesReportDeleted.apply)
+  implicit val salesReportNotFoundFormat: RootJsonFormat[SalesReportNotFound] = jsonFormat1(SalesReportNotFound.apply)
+  implicit val salesReportPKFormat: RootJsonFormat[SalesReportPK] = jsonFormat3(SalesReportPK.apply)
+  implicit val salesReportFormat: RootJsonFormat[SalesReport] = jsonFormat5(SalesReport.apply)
 }

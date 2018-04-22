@@ -1,8 +1,10 @@
 package com.polianskyi.csn.dao
 
-import com.polianskyi.csn.domain.Contract
+import com.polianskyi.csn.ConverterUtil.convertResultToList
+import com.polianskyi.csn.domain.{CoffeeHouse, Contract, Employee}
 import com.polianskyi.csn.system.PostgresConnector
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object ContractDao extends GenericDao[Contract, Int]{
@@ -72,7 +74,21 @@ object ContractDao extends GenericDao[Contract, Int]{
 
     })
 
-  override def findAll(): Future[Option[List[Contract]]] = ???
+  override def findAll(): Future[Option[List[Contract]]] = {
+    PostgresConnector.withStatement(stmt => {
+      val rs = stmt.executeQuery(selectAll)
+      convertResultToList(rs,
+        result => {
+          var employee: Employee = null
+          EmployeeDao.findByPk(result.getString(6)).onComplete(empl => employee = empl.get.get)
+
+          var coffeeHouse: CoffeeHouse = null
+          CoffeeHouseDao.findByPk(result.getString(7)).onComplete(chouse => coffeeHouse = chouse.get.get)
+
+          Contract(result.getInt(1), result.getString(2), result.getLong(3), result.getLong(4), result.getInt(5), employee, coffeeHouse, result.getDouble(8), result.getInt(9))
+        })
+    })
+  }
 
   override def delete(id: Int): Future[Option[Int]] = ???
 
