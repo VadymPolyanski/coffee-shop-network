@@ -7,7 +7,7 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
 import com.polianskyi.csn.SpecificRequestsHandler._
-import com.polianskyi.csn.domain.{FirstQueryAnswer, SalesReport, SecondQueryAnswer}
+import com.polianskyi.csn.domain.{FirstQueryAnswer, SecondQueryAnswer, ThirdQueryAnswer}
 import com.polianskyi.csn.service.Protocols
 
 trait SpecificRequestsHttpService extends Protocols with GenericHttpService {
@@ -35,6 +35,17 @@ trait SpecificRequestsHttpService extends Protocols with GenericHttpService {
                   complete {
                     (specificRequestsHandler ? GetEmployeesByPositionAndCoffeeHouseAndDate(address, position, startDate.toLong)).map {
                       case list: List[SecondQueryAnswer] => Some(list)
+                      case _ => Some(Nil)
+                    }
+                  }
+                }
+              }
+            } ~ path("third") {
+              parameters('address, 'saleDate) { (address, saleDate) =>
+                get {
+                  complete {
+                    (specificRequestsHandler ? GetGoodsByProductsAndSalesReportAndCoffeeHouseAndDate(address, saleDate.toLong)).map {
+                      case list: List[ThirdQueryAnswer] => Some(list)
                       case _ => Some(Nil)
                     }
                   }
