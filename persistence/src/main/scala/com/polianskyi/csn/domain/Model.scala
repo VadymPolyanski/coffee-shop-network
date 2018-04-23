@@ -32,6 +32,6 @@ final case class FourthQueryAnswer(address: String, space: Double, mobileNumber:
 final case class FivethQueryAnswer(contractNumber: Long, employee: String, position: String, startDate: Long, hoursPerWeek: Int, salary: Double)
 final case class SixthQueryAnswer(coffeeDrink: String, saleDate: Long, priceWithVat: Double)
 final case class SeventhQueryAnswer(name: String, avgSalary: Double)
-final case class EightthQueryAnswer(fullName: String, birthdayDate: Long, mobileNumber: String, sex: String)
+final case class EighthQueryAnswer(fullName: String, birthdayDate: Long, mobileNumber: String, sex: String)
 final case class NainthQueryAnswer(address: String, mobileNumber: String, space: Double, sales: Double)
 final case class TenthQueryAnswer(fullName: String, birthdayDate: Long, sales: Int)

@@ -44,7 +44,7 @@ trait Protocols extends DefaultJsonProtocol{
   implicit val fivethQueryAnswerFormat: RootJsonFormat[FivethQueryAnswer] = jsonFormat6(FivethQueryAnswer.apply)
   implicit val sixthQueryAnswerFormat: RootJsonFormat[SixthQueryAnswer] = jsonFormat3(SixthQueryAnswer.apply)
   implicit val seventhQueryAnswerFormat: RootJsonFormat[SeventhQueryAnswer] = jsonFormat2(SeventhQueryAnswer.apply)
-  implicit val eightthQueryAnswerFormat: RootJsonFormat[EightthQueryAnswer] = jsonFormat4(EightthQueryAnswer.apply)
+  implicit val eightthQueryAnswerFormat: RootJsonFormat[EighthQueryAnswer] = jsonFormat4(EighthQueryAnswer.apply)
   implicit val nainthQueryAnswerFormat: RootJsonFormat[NainthQueryAnswer] = jsonFormat4(NainthQueryAnswer.apply)
   implicit val tenthQueryAnswerFormat: RootJsonFormat[TenthQueryAnswer] = jsonFormat3(TenthQueryAnswer.apply)
 }

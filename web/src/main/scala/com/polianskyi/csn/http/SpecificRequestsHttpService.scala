@@ -95,6 +95,17 @@ trait SpecificRequestsHttpService extends Protocols with GenericHttpService {
                   }
                 }
               }
+            } ~ path("eighth") {
+              parameters('birthdayDateS, 'birthdayDateE, 'endDate) { (birthdayDateS, birthdayDateE, endDate) =>
+                get {
+                  complete {
+                    (specificRequestsHandler ? GetEmployeeByBirthdayFirstAndBirthdaySecondAndContractDate(birthdayDateS.toLong, birthdayDateE.toLong, endDate.toLong)).map {
+                      case list: List[EighthQueryAnswer] => Some(list)
+                      case _ => Some(Nil)
+                    }
+                  }
+                }
+              }
             }
           }
         }

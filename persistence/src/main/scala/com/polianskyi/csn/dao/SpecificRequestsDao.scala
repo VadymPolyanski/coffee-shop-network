@@ -63,7 +63,7 @@ object SpecificRequestsDao {
     "SELECT full_name, birthday_date, mobile_number, sex\n" +
     "FROM employees e\n" +
     "INNER JOIN contracts c ON c.employee = e.full_name\n" +
-    "WHERE e.birthday_date > ? AND e.birthday_date < ? AND c.end_date < ?;"
+    "WHERE e.birthday_date > ? AND e.birthday_date < ? AND ( c.end_date < ? OR c.end_date IS NULL );"
 
 
   val getCoffeeHouseByMaxSalesReportsAndFromDateSql: String = "" +
@@ -162,7 +162,7 @@ object SpecificRequestsDao {
     })
   }
 
-  def getEmployeeByBirthdayFirstAndBirthdaySecondAndContractDate(firstDate: Long, secondDate: Long, contractDate: Long): Future[Option[List[EightthQueryAnswer]]] = {
+  def getEmployeeByBirthdayFirstAndBirthdaySecondAndContractDate(firstDate: Long, secondDate: Long, contractDate: Long): Future[Option[List[EighthQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getEmployeeByBirthdayFirstAndBirthdaySecondAndContractDateSql, pstmt => {
       pstmt.setLong(1, firstDate)
       pstmt.setLong(2, secondDate)
@@ -170,7 +170,7 @@ object SpecificRequestsDao {
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => EightthQueryAnswer(result.getString(1), result.getLong(2), result.getString(3), result.getString(4)))
+        result => EighthQueryAnswer(result.getString(1), result.getLong(2), result.getString(3), result.getString(4)))
     })
   }
 
