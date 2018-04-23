@@ -15,7 +15,7 @@ object SpecificRequestsHandler {
   case class GetCoffeeHouseByProductAndMaxSalesReportsAndDate(product: String, date: Long)
   case class GetContractByEmployeeBirthdayAndSalary(date: Long, salary: Double)
   case class GetSalesReportByEmployeeAndDate(employee: String, date: Long)
-  case class GetPositionBySalaryAndCoffeeHouse(salary: Double, address: String)
+  case class GetPositionBySalaryAndCoffeeHouse(address: String, salary: Double)
   case class GetEmployeeByBirthdayFirstAndBirthdaySecondAndContractDate(firstDate: Long, secondDate: Long, contractDate: Long)
   case class GetCoffeeHouseByMaxSalesReportsAndFromDate(fromDate: Long)
   case class GetEmployeeByCoffeeHouseAndMaxSalesReport(address: String, fromDate: Long)
@@ -64,9 +64,9 @@ class SpecificRequestsHandler extends Actor {
         case Some(i) => _sender ! i
       }
 
-    case GetPositionBySalaryAndCoffeeHouse(salary, address) =>
+    case GetPositionBySalaryAndCoffeeHouse(address, salary) =>
       val _sender = sender()
-      getPositionBySalaryAndCoffeeHouse(salary, address).foreach {
+      getPositionBySalaryAndCoffeeHouse(address, salary).foreach {
         case Some(i) => _sender ! i
       }
 

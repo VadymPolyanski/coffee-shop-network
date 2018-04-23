@@ -151,7 +151,7 @@ object SpecificRequestsDao {
     })
   }
 
-  def getPositionBySalaryAndCoffeeHouse(salary: Double, address: String): Future[Option[List[SeventhQueryAnswer]]] = {
+  def getPositionBySalaryAndCoffeeHouse(address: String, salary: Double): Future[Option[List[SeventhQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getPositionBySalaryAndCoffeeHouseSql, pstmt => {
       pstmt.setString(1, address)
       pstmt.setDouble(2, salary)
