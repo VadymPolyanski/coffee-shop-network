@@ -24,7 +24,7 @@ trait Protocols extends DefaultJsonProtocol{
 
   implicit val deleteContractFormat: RootJsonFormat[ContractDeleted] = jsonFormat1(ContractDeleted.apply)
   implicit val contractNotFoundFormat: RootJsonFormat[ContractNotFound] = jsonFormat1(ContractNotFound.apply)
-//  implicit val positionFormat: RootJsonFormat[Position] = jsonFormat4(Position.apply)
+  implicit val positionFormat: RootJsonFormat[Position] = jsonFormat4(Position.apply)
   implicit val contractFormat: RootJsonFormat[Contract] = jsonFormat9(Contract.apply)
 
   implicit val deleteCoffeeDrinkFormat: RootJsonFormat[CoffeeDrinkDeleted] = jsonFormat1(CoffeeDrinkDeleted.apply)
@@ -36,4 +36,15 @@ trait Protocols extends DefaultJsonProtocol{
   implicit val salesReportNotFoundFormat: RootJsonFormat[SalesReportNotFound] = jsonFormat1(SalesReportNotFound.apply)
   implicit val salesReportPKFormat: RootJsonFormat[SalesReportPK] = jsonFormat3(SalesReportPK.apply)
   implicit val salesReportFormat: RootJsonFormat[SalesReport] = jsonFormat5(SalesReport.apply)
+
+  implicit val firstQueryAnswerFormat: RootJsonFormat[FirstQueryAnswer] = jsonFormat3(FirstQueryAnswer.apply)
+  implicit val secondQueryAnswerFormat: RootJsonFormat[SecondQueryAnswer] = jsonFormat4(SecondQueryAnswer.apply)
+  implicit val thirdQueryAnswerFormat: RootJsonFormat[ThirdQueryAnswer] = jsonFormat4(ThirdQueryAnswer.apply)
+  implicit val fourthQueryAnswerFormat: RootJsonFormat[FourthQueryAnswer] = jsonFormat4(FourthQueryAnswer.apply)
+  implicit val fivethQueryAnswerFormat: RootJsonFormat[FivethQueryAnswer] = jsonFormat6(FivethQueryAnswer.apply)
+  implicit val sixthQueryAnswerFormat: RootJsonFormat[SixthQueryAnswer] = jsonFormat3(SixthQueryAnswer.apply)
+  implicit val seventhQueryAnswerFormat: RootJsonFormat[SeventhQueryAnswer] = jsonFormat2(SeventhQueryAnswer.apply)
+  implicit val eightthQueryAnswerFormat: RootJsonFormat[EightthQueryAnswer] = jsonFormat4(EightthQueryAnswer.apply)
+  implicit val nainthQueryAnswerFormat: RootJsonFormat[NainthQueryAnswer] = jsonFormat4(NainthQueryAnswer.apply)
+  implicit val tenthQueryAnswerFormat: RootJsonFormat[TenthQueryAnswer] = jsonFormat3(TenthQueryAnswer.apply)
 }

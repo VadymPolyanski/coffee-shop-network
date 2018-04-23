@@ -16,7 +16,8 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.util.control.NonFatal
 
 object CsnHttpService extends App with CoffeeHouseHttpService with CoffeeDrinkHttpService
-  with EmployeeHttpService with ProductHttpService with  ContractHttpService with SalesReportHttpService with SpecificRequestsHttpService {
+  with EmployeeHttpService with ProductHttpService with  ContractHttpService with SalesReportHttpService
+  with SpecificRequestsHttpService  with PositionHttpService {
   import scala.concurrent.duration._
 
   override implicit def requestTimeout: Timeout = Timeout(50 seconds)
@@ -35,9 +36,11 @@ object CsnHttpService extends App with CoffeeHouseHttpService with CoffeeDrinkHt
   override def employeeHandler = system.actorOf(EmployeeHandler.props())
   override def salesReportHandler = system.actorOf(SalesReportHandler.props())
   override def specificRequestsHandler = system.actorOf(SpecificRequestsHandler.props())
+  override def positionHandler = system.actorOf(PositionHandler.props())
 
 
-  Http().bindAndHandle(coffeeHouseRoutes ~ coffeeDrinkRoutes ~ productRoutes ~ contractRoutes ~ employeeRoutes ~ salesReportRoutes ~ specificRequestsRoutes,
+  Http().bindAndHandle(coffeeHouseRoutes ~ coffeeDrinkRoutes ~ productRoutes ~ contractRoutes ~ employeeRoutes ~ salesReportRoutes
+    ~ specificRequestsRoutes ~ positionRoutes,
     config.getString("http.interface"), config.getInt("http.port"))
 
   implicit def myExceptionHandler: ExceptionHandler =

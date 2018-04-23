@@ -1,7 +1,7 @@
 package com.polianskyi.csn.dao
 
 import com.polianskyi.csn.ConverterUtil.convertResultToList
-import com.polianskyi.csn.domain.Employee
+import com.polianskyi.csn.domain._
 import com.polianskyi.csn.system.PostgresConnector
 
 import scala.concurrent.Future
@@ -84,18 +84,18 @@ object SpecificRequestsDao {
     "LIMIT 1;"
 
 
-  def getSuppliersByProductAndCoffeeHouse(productName: String, address: String): Future[Option[Any]] = {
+  def getSuppliersByProductAndCoffeeHouse(productName: String, address: String): Future[Option[List[FirstQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getSuppliersByProductAndCoffeeHouseSql, pstmt => {
       pstmt.setString(1, address)
       pstmt.setString(2, productName)
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => (result.getString(1), result.getString(2), result.getString(3)))
+        result => FirstQueryAnswer(result.getString(1), result.getString(2), result.getString(3)))
     })
   }
 
-  def getEmployeesByPositionAndCoffeeHouseAndDate(position: String, address: String, date: Long): Future[Option[Any]] = {
+  def getEmployeesByPositionAndCoffeeHouseAndDate(address: String, position: String, date: Long): Future[Option[List[SecondQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getEmployeesByPositionAndCoffeeHouseAndDateSql, pstmt => {
       pstmt.setString(1, address)
       pstmt.setString(2, position)
@@ -103,66 +103,66 @@ object SpecificRequestsDao {
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => (result.getString(1), result.getLong(2), result.getString(3), result.getString(4)))
+        result => SecondQueryAnswer(result.getString(1), result.getLong(2), result.getString(3), result.getString(4)))
     })
   }
 
-  def getGoodsByProductsAndSalesReportAndCoffeeHouseAndDate(address: String, date: Long): Future[Option[Any]] = {
+  def getGoodsByProductsAndSalesReportAndCoffeeHouseAndDate(address: String, date: Long): Future[Option[List[ThirdQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getGoodsByProductsAndSalesReportAndCoffeeHouseAndDateSql, pstmt => {
       pstmt.setString(1, address)
       pstmt.setLong(2, date)
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => (result.getString(1), result.getString(2), result.getDouble(3), result.getString(4)))
+        result => ThirdQueryAnswer(result.getString(1), result.getString(2), result.getDouble(3), result.getString(4)))
     })
   }
 
-  def getCoffeeHouseByProductAndMaxSalesReportsAndDate(coffeeDrinkName: String, date: Long): Future[Option[Any]] = {
+  def getCoffeeHouseByProductAndMaxSalesReportsAndDate(coffeeDrinkName: String, date: Long): Future[Option[List[FourthQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getCoffeeHouseByProductAndMaxSalesReportsAndDateSql, pstmt => {
       pstmt.setString(1, coffeeDrinkName)
       pstmt.setLong(2, date)
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => (result.getString(1), result.getDouble(2), result.getString(3), result.getInt(4)))
+        result => FourthQueryAnswer(result.getString(1), result.getDouble(2), result.getString(3), result.getInt(4)))
     })
   }
 
-  def getContractByEmployeeAgeAndSalary(date: Long, salary: Double): Future[Option[Any]] = {
+  def getContractByEmployeeAgeAndSalary(date: Long, salary: Double): Future[Option[List[FivethQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getContractByEmployeeAgeAndSalarySql, pstmt => {
       pstmt.setLong(1, date)
       pstmt.setDouble(2, salary)
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => (result.getLong(1), result.getString(2), result.getString(3), result.getLong(4), result.getInt(5), result.getDouble(6)))
+        result => FivethQueryAnswer(result.getLong(1), result.getString(2), result.getString(3), result.getLong(4), result.getInt(5), result.getDouble(6)))
     })
   }
 
-  def getSalesReportByEmployeeAndDate(employee: String, date: Long): Future[Option[Any]] = {
+  def getSalesReportByEmployeeAndDate(employee: String, date: Long): Future[Option[List[SixthQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getSalesReportByEmployeeAndDateSql, pstmt => {
       pstmt.setString(1, employee)
       pstmt.setLong(2, date)
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => (result.getString(1), result.getLong(2), result.getDouble(3)))
+        result => SixthQueryAnswer(result.getString(1), result.getLong(2), result.getDouble(3)))
     })
   }
 
-  def getPositionBySalaryAndCoffeeHouse(salary: Double, address: String): Future[Option[Any]] = {
+  def getPositionBySalaryAndCoffeeHouse(salary: Double, address: String): Future[Option[List[SeventhQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getPositionBySalaryAndCoffeeHouseSql, pstmt => {
       pstmt.setString(1, address)
       pstmt.setDouble(2, salary)
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => (result.getString(1), result.getDouble(2)))
+        result => SeventhQueryAnswer(result.getString(1), result.getDouble(2)))
     })
   }
 
-  def getEmployeeByBirthdayFirstAndBirthdaySecondAndContractDate(firstDate: Long, secondDate: Long, contractDate: Long): Future[Option[Any]] = {
+  def getEmployeeByBirthdayFirstAndBirthdaySecondAndContractDate(firstDate: Long, secondDate: Long, contractDate: Long): Future[Option[List[EightthQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getEmployeeByBirthdayFirstAndBirthdaySecondAndContractDateSql, pstmt => {
       pstmt.setLong(1, firstDate)
       pstmt.setLong(2, secondDate)
@@ -170,28 +170,28 @@ object SpecificRequestsDao {
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => (result.getString(1), result.getLong(2), result.getString(3), result.getString(4)))
+        result => EightthQueryAnswer(result.getString(1), result.getLong(2), result.getString(3), result.getString(4)))
     })
   }
 
-  def getCoffeeHouseByMaxSalesReportsAndFromDate(fromDate: Long): Future[Option[Any]] = {
+  def getCoffeeHouseByMaxSalesReportsAndFromDate(fromDate: Long): Future[Option[List[NainthQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getCoffeeHouseByMaxSalesReportsAndFromDateSql, pstmt => {
       pstmt.setLong(1, fromDate)
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => (result.getString(1), result.getString(2), result.getDouble(3), result.getDouble(4)))
+        result => NainthQueryAnswer(result.getString(1), result.getString(2), result.getDouble(3), result.getDouble(4)))
     })
   }
 
-  def getEmployeeByCoffeeHouseAndMaxSalesReport(address: String, fromDate: Long): Future[Option[Any]] = {
+  def getEmployeeByCoffeeHouseAndMaxSalesReport(address: String, fromDate: Long): Future[Option[List[TenthQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getEmployeeByCoffeeHouseAndMaxSalesReportSql, pstmt => {
       pstmt.setLong(1, fromDate)
       pstmt.setString(1, address)
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => (result.getString(1), result.getLong(2), result.getInt(3)))
+        result => TenthQueryAnswer(result.getString(1), result.getLong(2), result.getInt(3)))
     })
   }
 }

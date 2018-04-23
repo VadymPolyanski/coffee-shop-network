@@ -79,11 +79,9 @@ object ContractDao extends GenericDao[Contract, Int]{
       val rs = stmt.executeQuery(selectAll)
       convertResultToList(rs,
         result => {
-          var employee: Employee = null
-          EmployeeDao.findByPk(result.getString(6)).onComplete(empl => employee = empl.get.get)
+          var employee: Employee = EmployeeDao.findByPk(result.getString(6)).value.get.get.get
 
-          var coffeeHouse: CoffeeHouse = null
-          CoffeeHouseDao.findByPk(result.getString(7)).onComplete(chouse => coffeeHouse = chouse.get.get)
+          var coffeeHouse: CoffeeHouse = CoffeeHouseDao.findByPk(result.getString(7)).value.get.get.get
 
           Contract(result.getInt(1), result.getString(2), result.getLong(3), result.getLong(4), result.getInt(5), employee, coffeeHouse, result.getDouble(8), result.getInt(9))
         })

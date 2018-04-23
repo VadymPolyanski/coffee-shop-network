@@ -7,10 +7,10 @@ import com.polianskyi.csn.dao.SpecificRequestsDao._
 
 object SpecificRequestsHandler {
 
-  def props(): Props = Props(new CoffeeHouseHandler())
+  def props(): Props = Props(new SpecificRequestsHandler())
 
   case class GetSuppliersByProductAndCoffeeHouse(productName: String, address: String)
-  case class GetEmployeesByPositionAndCoffeeHouseAndDate(productName: String, address: String, date: Long)
+  case class GetEmployeesByPositionAndCoffeeHouseAndDate(address: String, position: String, date: Long)
   case class GetGoodsByProductsAndSalesReportAndCoffeeHouseAndDate(address: String, date: Long)
   case class GetCoffeeHouseByProductAndMaxSalesReportsAndDate(productName: String, date: Long)
   case class GetContractByEmployeeBirthdayAndSalary(date: Long, salary: Double)
@@ -34,9 +34,9 @@ class SpecificRequestsHandler extends Actor {
       }
 
 
-    case GetEmployeesByPositionAndCoffeeHouseAndDate(productName, address, date) =>
+    case GetEmployeesByPositionAndCoffeeHouseAndDate(address, position, date) =>
       val _sender = sender()
-      getEmployeesByPositionAndCoffeeHouseAndDate(productName, address, date).foreach {
+      getEmployeesByPositionAndCoffeeHouseAndDate(address, position, date).foreach {
         case Some(i) => _sender ! i
       }
 
