@@ -12,7 +12,7 @@ object SpecificRequestsHandler {
   case class GetSuppliersByProductAndCoffeeHouse(productName: String, address: String)
   case class GetEmployeesByPositionAndCoffeeHouseAndDate(address: String, position: String, date: Long)
   case class GetGoodsByProductsAndSalesReportAndCoffeeHouseAndDate(address: String, date: Long)
-  case class GetCoffeeHouseByProductAndMaxSalesReportsAndDate(productName: String, date: Long)
+  case class GetCoffeeHouseByProductAndMaxSalesReportsAndDate(product: String, date: Long)
   case class GetContractByEmployeeBirthdayAndSalary(date: Long, salary: Double)
   case class GetSalesReportByEmployeeAndDate(employee: String, date: Long)
   case class GetPositionBySalaryAndCoffeeHouse(salary: Double, address: String)
