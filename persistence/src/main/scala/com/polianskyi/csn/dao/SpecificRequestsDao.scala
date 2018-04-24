@@ -187,7 +187,7 @@ object SpecificRequestsDao {
   def getEmployeeByCoffeeHouseAndMaxSalesReport(address: String, fromDate: Long): Future[Option[List[TenthQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getEmployeeByCoffeeHouseAndMaxSalesReportSql, pstmt => {
       pstmt.setLong(1, fromDate)
-      pstmt.setString(1, address)
+      pstmt.setString(2, address)
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
