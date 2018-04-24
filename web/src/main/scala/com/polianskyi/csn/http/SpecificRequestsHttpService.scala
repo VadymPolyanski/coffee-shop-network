@@ -106,6 +106,17 @@ trait SpecificRequestsHttpService extends Protocols with GenericHttpService {
                   }
                 }
               }
+            } ~ path("ninth") {
+              parameters('fromDate) { fromDate =>
+                get {
+                  complete {
+                    (specificRequestsHandler ? GetCoffeeHouseByMaxSalesReportsAndFromDate(fromDate.toLong)).map {
+                      case list: List[NinthQueryAnswer] => Some(list)
+                      case _ => Some(Nil)
+                    }
+                  }
+                }
+              }
             }
           }
         }

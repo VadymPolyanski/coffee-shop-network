@@ -174,13 +174,13 @@ object SpecificRequestsDao {
     })
   }
 
-  def getCoffeeHouseByMaxSalesReportsAndFromDate(fromDate: Long): Future[Option[List[NainthQueryAnswer]]] = {
+  def getCoffeeHouseByMaxSalesReportsAndFromDate(fromDate: Long): Future[Option[List[NinthQueryAnswer]]] = {
     PostgresConnector.withPreparedStatement(getCoffeeHouseByMaxSalesReportsAndFromDateSql, pstmt => {
       pstmt.setLong(1, fromDate)
       val rs = pstmt.executeQuery()
 
       convertResultToList(rs,
-        result => NainthQueryAnswer(result.getString(1), result.getString(2), result.getDouble(3), result.getDouble(4)))
+        result => NinthQueryAnswer(result.getString(1), result.getString(2), result.getDouble(3), result.getDouble(4)))
     })
   }
 
